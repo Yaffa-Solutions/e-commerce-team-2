@@ -2,11 +2,11 @@ import {
     buildAddProductForm,
     createFormTitle
 }
-from './components/seller/addproduct.js';
+from './components/addproduct.js';
 
 
 document.addEventListener("DOMContentLoaded",() => { 
-  
+
     renderAddProductForm();
 });
 
