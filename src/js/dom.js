@@ -1,40 +1,53 @@
-export function createLabel(labelText)
-{
-  let label=document.createElement("label");
-  label.textContent=labelText;
-  label.className = "block mb-1 font-semibold text-gray-700";
+export const createHtmlElement = (ele, className, content) => {
+  const element = document.createElement(ele);
+  element.className = className;
+  if (content) {
+    element.textContent = content;
+  }
+  return element;
+};
 
-  return label;
-}
+export const customAppendChild = (parent, ...children) => {
+  children.forEach((child) => parent.appendChild(child));
+};
 
-export function createInput(text,inputName,inputType,accept=null)
-{
-  let label=createLabel(text);
-  
-  let input=document.createElement("input");
-  input.required=true;
-  input.type=inputType;
-  input.name=inputName
-  input.className = "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500";
+export const createInput = (
+  text,
+  inputName,
+  inputType,
+  isRequired = true,
+  accept = null
+) => {
+  let label = createHtmlElement(
+    'label',
+    'block mb-1 font-semibold text-gray-700',
+    text
+  );
 
-  if(accept)
-    input.setAttribute('accept', accept);
+  let input = createHtmlElement(
+    'input',
+    'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+  );
 
-  let div=document.createElement("div");
-  div.appendChild(label);
-  div.appendChild(input)
-  div.className = "mb-4";
+  input.required = isRequired;
+  input.type = inputType;
+  input.name = inputName;
 
-  
+  if (accept) input.setAttribute('accept', accept);
+  let div = createHtmlElement('div', 'mb-4');
+  // div.appendChild(label);
+  // div.appendChild(input);
+
+  customAppendChild(div, label, input);
   return div;
-}
+};
 
-export function createSubmitbtn()
-{
-    let btn=document.createElement("button");
-    btn.textContent="Submit";
-    btn.type="submit";
-    btn.className = "w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition-colors";
-
-    return btn;
+export function createSubmitBtn() {
+  let btn = createHtmlElement(
+    'button',
+    'w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition-colors',
+    'Submit'
+  );
+  btn.type = 'submit';
+  return btn;
 }
