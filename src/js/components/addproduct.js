@@ -45,10 +45,11 @@ export const getProductDataFromForm = (form) => {
 
     reader.onload = () => {
       const product = {
+        id: form.dataset.id || crypto.randomUUID(),
         name: formData.get("name"),
         price: formData.get("price"),
         discount: formData.get("discount"),
-        description: formData.get("detail"),
+        detail: formData.get("detail"),
         image: reader.result, // Base64 string
         category: formData.get("category"),
       };
@@ -86,35 +87,81 @@ export const createCategoryDropdown = (categories) => {
   return div;
 };
 
-export const buildAddProductForm = (onSubmit) => {
+export const buildProductForm = (onSubmit, product = null, saveProduct) => {
   const form = document.createElement("form");
+
   let inputs = inputFelid.map(
     ({ title, inputName, inputType, accept = null }) => {
-      return createInput(title, inputName, inputType, accept);
+      const inputGroup = createInput(title, inputName, inputType, accept);
+
+      if (product && product[inputName] !== undefined) {
+        const input = inputGroup.querySelector("input");
+        if (input && input.type !== "file") {
+          input.value = product[inputName];
+        }
+      }
+
+      return inputGroup;
     }
   );
 
-  inputs = [
-    ...inputs,
-    createCategoryDropdown(categories),
-    createSubmitBtn("Add Product"),
-  ];
+  if (product && product.id) {
+    form.dataset.id = product.id;
+  }
+
+  const categoryDropdown = createCategoryDropdown(categories);
+  if (product && product.category) {
+    const select = categoryDropdown.querySelector("select");
+    if (select) {
+      select.value = product.category;
+    }
+  }
+
+  const submitBtn = createSubmitBtn(product ? "Update Product" : "Add Product");
+
+  inputs = [...inputs, categoryDropdown, submitBtn];
+
+  if (product && product.image) {
+    const currentImgLabel = createHtmlElement(
+      "p",
+      "mb-1 font-semibold text-gray-700",
+      "Current Image:"
+    );
+    const previewImg = createHtmlElement(
+      "img",
+      "mb-4 h-32 w-full object-contain rounded border",
+      "",
+      { src: product.image, alt: product.name }
+    );
+    customAppendChild(form, currentImgLabel, previewImg);
+  }
 
   customAppendChild(form, ...inputs);
 
   form.addEventListener("submit", (e) => {
-    onSubmit(e, form, getProductDataFromForm, saveProduct);
+    console.log("Calling saveProduct/updateProduct:", saveProduct);
 
+    onSubmit(e, form, getProductDataFromForm, saveProduct);
     document.getElementById("modal-overlay")?.remove();
     document.getElementById("product-list")?.remove();
-    document.location.reload();
   });
 
   return form;
 };
 
-const saveProduct = (product) => {
+export const saveProduct = (product) => {
+  console.log("in save product");
+
   const products = JSON.parse(localStorage.getItem("products") || "[]");
   products.push(product);
   localStorage.setItem("products", JSON.stringify(products));
+};
+
+export const updateProduct = (updatedProduct) => {
+  const products = JSON.parse(localStorage.getItem("products") || "[]");
+  const index = products.findIndex((p) => p.id === updatedProduct.id);
+  if (index !== -1) {
+    products[index] = updatedProduct;
+    localStorage.setItem("products", JSON.stringify(products));
+  }
 };
