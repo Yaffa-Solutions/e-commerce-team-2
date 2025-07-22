@@ -32,7 +32,7 @@ const  onSubmit = async (e,form,getProductDataFromForm,saveProduct)=>{
 
 
 
-export function renderProductList() {
+export const renderProductList = () => {
   const wrapper = createHtmlElement(
     "div",
     "max-w-7xl mx-auto p-4 flex flex-col items-center justify-center"
@@ -60,7 +60,7 @@ export function renderProductList() {
 }
 
 
-function openAddProductModal() {
+const openAddProductModal = () => {
 
   const overlay = createHtmlElement(
     "div",

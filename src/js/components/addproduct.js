@@ -38,7 +38,7 @@ const inputFelid = [
   },
 ];
 
-export function getProductDataFromForm(form)
+export const getProductDataFromForm = (form) =>
 {
     let formData = new FormData(form);
 
@@ -67,7 +67,7 @@ export function getProductDataFromForm(form)
 
 
 
-export function createCategoryDropdown(categories) {
+export const createCategoryDropdown = (categories) =>  {
   let label = createHtmlElement(
     'label',
     'block mb-1 font-semibold text-gray-700',
@@ -95,7 +95,7 @@ export function createCategoryDropdown(categories) {
 
 
 
-export function buildAddProductForm(onSubmit) {
+export const  buildAddProductForm = (onSubmit) => {
   const form = document.createElement('form');
   let inputs = inputFelid.map(
     ({ title, inputName, inputType, accept = null }) => {
@@ -125,7 +125,7 @@ export function buildAddProductForm(onSubmit) {
   return form;
 }
 
-function saveProduct(product) {
+const saveProduct = (product) => {
     const products = JSON.parse(localStorage.getItem('products') || '[]');
     products.push(product);
     localStorage.setItem('products', JSON.stringify(products));
