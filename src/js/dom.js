@@ -69,3 +69,12 @@ export const createSubmitBtn = (text) => {
   btn.textContent = text;
   return btn;
 };
+
+export const fetchFromLocalStorage = (key) => {
+  let data= JSON.parse(localStorage.getItem(key)) || [];
+  return data;
+};
+
+export const setToLocalStorage = (key, data) => {
+    localStorage.setItem(key, JSON.stringify(data));
+};

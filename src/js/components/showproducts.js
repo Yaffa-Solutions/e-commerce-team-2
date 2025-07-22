@@ -1,5 +1,6 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
 import { openProductModal } from "../index.js";
+import { deleteProduct } from "./addproduct.js";
 
 export const createCard = (product) => {
   const card = createHtmlElement(
@@ -41,13 +42,26 @@ export const createCard = (product) => {
 
   const editBtn = createHtmlElement(
     "button",
-    "absolute top-2 right-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
-    "Edit"
+    "absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
+    "Edit",
+    {},
+    {
+      click: () => openProductModal(product),
+    }
   );
 
-  editBtn.addEventListener("click", () => {
-    openProductModal(product);
-  });
+  const deleteBtn = createHtmlElement(
+    "button",
+    "absolute top-2 right-2  text-white px-3 py-1 rounded  transition",
+    "❌ ",
+    {},
+    {
+      click: () => {
+        if (confirm("Are you sure you want to delete this product?"))
+          deleteProduct(product);
+      },
+    }
+  );
 
   customAppendChild(
     card,
@@ -56,7 +70,8 @@ export const createCard = (product) => {
     price,
     priceAfterDiscount,
     category,
-    editBtn
+    editBtn,
+    deleteBtn
   );
 
   return card;
