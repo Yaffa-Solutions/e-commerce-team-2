@@ -59,12 +59,13 @@ export const createInput = (
   return div;
 };
 
-export const createSubmitBtn = () => {
+export const createSubmitBtn = (text) => {
   let btn = createHtmlElement(
     "button",
     "w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition-colors",
     "Submit"
   );
   btn.type = "submit";
+  btn.textContent = text;
   return btn;
 };

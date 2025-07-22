@@ -1,7 +1,11 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
+import { openProductModal } from "../index.js";
 
 export const createCard = (product) => {
-  const card = createHtmlElement("div", "bg-white rounded-lg shadow-md p-4");
+  const card = createHtmlElement(
+    "div",
+    "relative p-[50px] bg-white rounded-lg shadow-md "
+  );
 
   const image = createHtmlElement(
     "img",
@@ -35,7 +39,25 @@ export const createCard = (product) => {
     `Category: ${product.category}`
   );
 
-  customAppendChild(card, image, name, price, priceAfterDiscount, category);
+  const editBtn = createHtmlElement(
+    "button",
+    "absolute top-2 right-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
+    "Edit"
+  );
+
+  editBtn.addEventListener("click", () => {
+    openProductModal(product);
+  });
+
+  customAppendChild(
+    card,
+    image,
+    name,
+    price,
+    priceAfterDiscount,
+    category,
+    editBtn
+  );
 
   return card;
 };

@@ -1,4 +1,8 @@
-import { buildAddProductForm } from "./components/addproduct.js";
+import {
+  buildProductForm,
+  saveProduct,
+  updateProduct,
+} from "./components/addproduct.js";
 
 import { getProductsFromStorage } from "./components/showproducts.js";
 
@@ -11,15 +15,40 @@ document.addEventListener("DOMContentLoaded", () => {
 const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   e.preventDefault();
   const product = await getProductDataFromForm(form);
+
+  const price = parseFloat(product.price);
+  const discount = parseFloat(product.discount);
+
+  if (isNaN(price) || price <= 0) {
+    alert("Price must be a positive number.");
+    return;
+  }
+
+  if (isNaN(discount) || discount < 0) {
+    alert("Discount must be a non-negative number.");
+    return;
+  }
+
   saveProduct(product);
-  alert("Product added successfully!");
+
+  const isUpdate = !!form.dataset.id;
+  alert(
+    isUpdate ? "Product updated successfully!" : "Product added successfully!"
+  );
+
   form.reset();
+  renderProductList();
 };
 
 export const renderProductList = () => {
+  const existingWrapper = document.getElementById("product-list");
+  if (existingWrapper) existingWrapper.remove();
+
   const wrapper = createHtmlElement(
     "div",
-    "max-w-7xl mx-auto p-4 flex flex-col items-center justify-center"
+    "max-w-7xl mx-auto p-4 flex flex-col items-center justify-center",
+    "",
+    { id: "product-list" }
   );
 
   const btnContainer = createHtmlElement("div", "w-full flex justify-end mb-4");
@@ -27,10 +56,14 @@ export const renderProductList = () => {
   const addBtn = createHtmlElement(
     "button",
     " py-2 px-3 mb-[10px] bg-blue-600 text-white rounded hover:bg-blue-700 transition",
-    "➕ Add Product"
+    "➕ Add Product",
+    {},
+    {
+      click: () => {
+        openProductModal();
+      },
+    }
   );
-
-  addBtn.addEventListener("click", openAddProductModal);
 
   customAppendChild(btnContainer, addBtn);
 
@@ -41,7 +74,7 @@ export const renderProductList = () => {
   customAppendChild(document.body, wrapper);
 };
 
-const openAddProductModal = () => {
+export const openProductModal = (product = null) => {
   const overlay = createHtmlElement(
     "div",
     "fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50",
@@ -51,7 +84,7 @@ const openAddProductModal = () => {
 
   const modalContent = createHtmlElement(
     "div",
-    "bg-white w-full max-w-xl p-6 rounded shadow-lg relative"
+    "bg-white max-h-[90vh] overflow-y-auto w-full max-w-xl p-6 rounded shadow-lg relative"
   );
 
   const closeBtn = createHtmlElement(
@@ -64,13 +97,19 @@ const openAddProductModal = () => {
     }
   );
 
+  const isUpdate = product !== null;
+
   const formTitle = createHtmlElement(
     "h2",
-    "text-2xl font-bold  mb-6 text-center text-gray-800",
-    "Add New Product"
+    "text-2xl font-bold mb-6 text-center text-gray-800",
+    isUpdate ? "Update Product" : "Add New Product"
   );
 
-  const form = buildAddProductForm(onSubmit);
+  const form = buildProductForm(
+    onSubmit,
+    product,
+    isUpdate ? updateProduct : saveProduct
+  );
 
   customAppendChild(modalContent, closeBtn, formTitle, form);
   customAppendChild(overlay, modalContent);
