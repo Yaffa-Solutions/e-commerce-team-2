@@ -34,11 +34,38 @@ export const createCard = (product) => {
     "text-gray-600",
     `Category: ${product.category}`
   );
+const addToCartBtn = createHtmlElement(
+  "button",
+  "mt-2 text-sm text-blue-600 hover:underline",
+  "Add to Cart",
+  {},
+  {
+    click: () => addToCart(product),
+  }
+);
 
-  customAppendChild(card, image, name, price, priceAfterDiscount, category);
+  customAppendChild(card, image, name, price, priceAfterDiscount, category,addToCartBtn);
 
   return card;
 };
+
+export const addToCart = (product) => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const isAlreadyInCart = cart.some(
+    (item) => item.name === product.name && item.price === product.price
+  );
+
+  if (isAlreadyInCart) {
+    alert("This product is already in your cart.");
+    return;
+  }
+
+  cart.push(product);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert(" Product added to cart!");
+};
+
 
 export const getProductsFromStorage = () => {
   const products = localStorage.getItem("products") || "[]";
@@ -58,4 +85,35 @@ export const setProductsToCards = (products = []) => {
     customAppendChild(container, card);
   });
   return container;
+};
+
+
+
+export const renderProducts = (filters = {}) => {
+  const container = document.getElementById("product-list");
+  container.innerHTML = "";
+
+  let products = getProductsFromStorage();
+
+  if (filters.name) {
+    products = products.filter((p) =>
+      p.name.toLowerCase().includes(filters.name.toLowerCase())
+    );
+  }
+
+  if (filters.maxPrice !== undefined) {
+    products = products.filter((p) => Number(p.price) <= filters.maxPrice);
+  }
+
+  products.forEach((product) => {
+    const displayProduct = {
+      ...product,
+      price: product.discount
+        ? (product.price * (100 - product.discount)) / 100
+        : product.price,
+      oldPrice: product.discount ? product.price : null,
+    };
+
+    container.appendChild(createCard(displayProduct));
+  });
 };
