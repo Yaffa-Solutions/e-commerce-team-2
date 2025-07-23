@@ -69,7 +69,7 @@ export const createNavbar = (links = []) => {
 export const createFooter = () => {
   const footer = createHtmlElement(
     "footer",
-    "text-black bg-white  fixed bottom-0 left-0 right-0 z-[1000] shadow-2xl text-gray-700 border-t mt-[100px]"
+    "text-black bg-white  z-[1000] shadow-2xl text-gray-700 border-t mt-[100px]"
   );
 
   const wrapper = createHtmlElement(
@@ -148,7 +148,7 @@ const showMenuModal = (links) => {
   links.forEach((text) => {
     const li = createHtmlElement("li");
     const a = createHtmlElement("a", "text-lg hover:underline", text, {
-      href: "#",
+      href: `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);

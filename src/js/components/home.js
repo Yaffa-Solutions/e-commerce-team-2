@@ -89,3 +89,89 @@ export const CreateAboutUsSection = () => {
   const main = document.querySelector("main");
   customAppendChild(main, section);
 };
+
+export const createGallerySection = () => {
+  const section = createHtmlElement("section", "w-full py-16 px-6 mb-[100px]");
+
+  const container = createHtmlElement(
+    "div",
+    "max-w-7xl mx-auto flex flex-col gap-12"
+  );
+
+  const sectionTitle = createHtmlElement(
+    "h2",
+    " md:text-4xl font2 font-bold text-left mb-10",
+    "Our Gallery Showcase"
+  );
+
+  
+
+  const row1 = createRow(
+    "../../public/images/gallary1.jpg",
+    "Photography",
+    "Creative Visuals",
+    "Immerse yourself in a visual journey through stunning photography by emerging artists. Witness the power of quality gear in action as we showcase breathtaking landscapes, captivating portraits, and dynamic action shots."
+  );
+
+  const row2 = createRow(
+    "../../public/images/gallary2.jpg",
+    "Artistry",
+    "Creative Expressions",
+    "Experience the artistic vision of talented photographers who have captured unique moments with our specialized equipment. Each image tells a story, reflecting the beauty and diversity of the world around us",
+    true
+  );
+
+  const row3 = createRow(
+    "../../public/images/gallary3.jpg",
+    "Inspiration",
+    "Creative Insights",
+    "Get inspired by the creativity and passion of photographers who have used our gear to create exceptional visual masterpieces. Explore our gallery to ignite your own artistic spark."
+  );
+
+  customAppendChild(container, sectionTitle, row1, row2, row3);
+  customAppendChild(section, container);
+
+  const main = document.querySelector("main");
+  customAppendChild(main, section);
+};
+
+const createRow = (
+    imgSrc,
+    titleText,
+    subtitleText,
+    paraText,
+    reverse = false
+  ) => {
+    const row = createHtmlElement(
+      "div",
+      `flex flex-col md:flex-row ${
+        reverse ? "md:flex-row-reverse" : ""
+      } items-center gap-8`
+    );
+
+    const image = createHtmlElement(
+      "img",
+      "w-full md:w-1/2 rounded-lg shadow-md",
+      "",
+      {
+        src: imgSrc,
+        alt: titleText,
+      }
+    );
+
+    const textContainer = createHtmlElement("div", "w-full md:w-1/2");
+
+    const title = createHtmlElement("h3", " font-bold mb-2 font4", titleText);
+
+    const subtitle = createHtmlElement(
+      "h4",
+      " text-gray-700 font-medium mb-2 font7",
+      subtitleText
+    );
+
+    const paragraph = createHtmlElement("p", "leading-relaxed font8", paraText);
+
+    customAppendChild(textContainer, title, subtitle, paragraph);
+    customAppendChild(row, image, textContainer);
+    return row;
+  };
