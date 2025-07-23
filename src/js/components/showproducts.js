@@ -133,11 +133,16 @@ export const setProductsToCards = (products = []) => {
 
 
 
-export const renderProducts = (filters = {}) => {
-  const container = document.getElementById("product-list");
-  container.innerHTML = "";
+export const getProductsFromStoragearray = () => {
+  return JSON.parse(localStorage.getItem("products") || "[]");
+};
 
-  let products = getProductsFromStorage();
+export const renderProducts = (filters = {}) => {
+  const filterContainer = document.getElementById("FilterContainer");
+  const allProductsContainer = document.getElementById("CardsContainer");
+
+  filterContainer.innerHTML = ""; 
+  let products = getProductsFromStoragearray();
 
   if (filters.name) {
     products = products.filter((p) =>
@@ -149,15 +154,23 @@ export const renderProducts = (filters = {}) => {
     products = products.filter((p) => Number(p.price) <= filters.maxPrice);
   }
 
-  products.forEach((product) => {
-    const displayProduct = {
-      ...product,
-      price: product.discount
-        ? (product.price * (100 - product.discount)) / 100
-        : product.price,
-      oldPrice: product.discount ? product.price : null,
-    };
+  if (products.length > 0) {
+    allProductsContainer.style.display = "none";
+    filterContainer.style.display = "grid";
 
-    container.appendChild(createCard(displayProduct));
-  });
+    products.forEach((product) => {
+      const displayProduct = {
+        ...product,
+        price: product.discount
+          ? (product.price * (100 - product.discount)) / 100
+          : product.price,
+        oldPrice: product.discount ? product.price : null,
+      };
+
+      filterContainer.appendChild(createCard(displayProduct));
+    });
+  } else {
+    allProductsContainer.style.display = "grid";
+    filterContainer.style.display = "none";
+  }
 };
