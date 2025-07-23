@@ -10,7 +10,11 @@ import {
 } from "./components/show-products.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
-import { createNavbar, createFooter } from "./components/layout.js";
+import {
+  createNavbar,
+  createFooter,
+  updateCartCount,
+} from "./components/layout.js";
 import {
   createHomeSection,
   CreateAboutUsSection,
@@ -204,7 +208,11 @@ export const openProductModal = (product = null) => {
   customAppendChild(document.body, overlay);
 };
 
-
+const renderHomePage = () => {
+  createHomeSection();
+  CreateAboutUsSection();
+  createGallerySection();
+};
 
 const renderRoute = () => {
   const main = document.querySelector("main");

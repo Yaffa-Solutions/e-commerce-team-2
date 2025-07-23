@@ -40,7 +40,7 @@ export const createNavbar = (links = []) => {
 
   const ul2 = createHtmlElement(
     "ul",
-    "flex hidden md:block space-x-6 text-sm font-medium"
+    "md:flex hidden md:block space-x-6 text-sm font-medium"
   );
 
   const loginBtn = createHtmlElement(
@@ -49,17 +49,27 @@ export const createNavbar = (links = []) => {
     "Login"
   );
 
-  const cartIcon = createHtmlElement(
-    "span",
-    "text-xl",
-    "🛒",
+  const cartWrapper = createHtmlElement(
+    "div",
+    "relative  cursor-pointer",
+    "",
     {},
     {
       click: () => openCartModal(),
     }
   );
 
-  customAppendChild(ul2, loginBtn, cartIcon);
+  const cartCount = createHtmlElement(
+    "span",
+    "absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full",
+    getCartCount().toString(),
+    { id: "cart-count" }
+  );
+
+  const cartIcon = createHtmlElement("span", "text-xl", "🛒");
+
+  customAppendChild(cartWrapper, cartIcon, cartCount);
+  customAppendChild(ul2, loginBtn, cartWrapper);
 
   customAppendChild(container, title, ul, ul2, menu);
   nav.appendChild(container);
@@ -264,4 +274,17 @@ const removeFromCart = (productToRemove) => {
   );
 
   localStorage.setItem("cart", JSON.stringify(updatedCart));
+  updateCartCount();
+};
+
+const getCartCount = () => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  return cart.length;
+};
+
+export const updateCartCount = () => {
+  const cartCountSpan = document.getElementById("cart-count");
+  if (cartCountSpan) {
+    cartCountSpan.textContent = getCartCount().toString();
+  }
 };
