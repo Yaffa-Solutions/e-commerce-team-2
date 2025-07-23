@@ -2,7 +2,6 @@ import { createHtmlElement, customAppendChild } from "../dom.js";
 import { openProductModal } from "../index.js";
 import { deleteProduct } from "./add-product.js";
 
-// إنشاء كرت منتج
 export const createCard = (product, seller = false) => {
   const card = createHtmlElement(
     "div",
@@ -104,7 +103,6 @@ export const createCard = (product, seller = false) => {
   return card;
 };
 
-// استرجاع المنتجات وعرضها داخل container
 export const getProductsFromStorage = (seller = false) => {
   const products = localStorage.getItem("products") || "[]";
   const container = setProductsToCards(JSON.parse(products), seller);
@@ -125,12 +123,10 @@ export const setProductsToCards = (products = [], seller = false) => {
   return container;
 };
 
-// استرجاع المنتجات كـ Array فقط (بدون DOM)
 export const getProductsFromStoragearray = () => {
   return JSON.parse(localStorage.getItem("products") || "[]");
 };
 
-// عرض المنتجات المفلترة
 export const renderProducts = (filters = {}) => {
   const filterContainer = document.getElementById("FilterContainer");
   const allProductsContainer = document.getElementById("CardsContainer");
