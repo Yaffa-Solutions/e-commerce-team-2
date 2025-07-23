@@ -4,7 +4,11 @@ import {
   createSubmitBtn,
   createHtmlElement,
   customAppendChild,
+  fetchFromLocalStorage,
+  setToLocalStorage,
 } from "../dom.js";
+
+import { renderProductList } from "../index.js";
 
 const inputFelid = [
   {
@@ -150,18 +154,23 @@ export const buildProductForm = (onSubmit, product = null, saveProduct) => {
 };
 
 export const saveProduct = (product) => {
-  console.log("in save product");
-
-  const products = JSON.parse(localStorage.getItem("products") || "[]");
+  let products = fetchFromLocalStorage("products");
   products.push(product);
-  localStorage.setItem("products", JSON.stringify(products));
+  setToLocalStorage("products", products);
 };
 
 export const updateProduct = (updatedProduct) => {
-  const products = JSON.parse(localStorage.getItem("products") || "[]");
+  let products = fetchFromLocalStorage("products");
   const index = products.findIndex((p) => p.id === updatedProduct.id);
   if (index !== -1) {
     products[index] = updatedProduct;
-    localStorage.setItem("products", JSON.stringify(products));
+    setToLocalStorage("products", products);
   }
+};
+
+export const deleteProduct = (product) => {
+  let products = fetchFromLocalStorage("products");
+  products = products.filter((p) => p.id !== product.id);
+  setToLocalStorage("products", products);
+  renderProductList();
 };
