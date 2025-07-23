@@ -49,3 +49,43 @@ export const createHomeSection = () => {
   const main = document.querySelector("main");
   customAppendChild(main, homeSection);
 };
+
+export const CreateAboutUsSection = () => {
+  const section = createHtmlElement(
+    "section",
+    "w-full py-16 px-6 text-black mb-[100px]",
+    ""
+  );
+  section.style.backgroundColor = "rgb(255, 127, 48)";
+
+  const container = createHtmlElement(
+    "div",
+    "max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-8"
+  );
+
+  const leftSide = createHtmlElement("div", "md:w-1/2");
+
+  const title = createHtmlElement(
+    "h2",
+    "font2 md:text-4xl font-bold mb-4",
+    "About Us"
+  );
+
+  const subtitle = createHtmlElement("p", "font5 font-medium", "Our Mission");
+
+  const rightSide = createHtmlElement("div", "md:w-1/2");
+
+  const paragraph = createHtmlElement(
+    "p",
+    "text-base leading-relaxed",
+    `At A. Choi, we are dedicated to providing photography enthusiasts with a wide selection of cameras, lenses, and accessories. Our commitment to expert guidance ensures that photographers of all levels can find the perfect gear to capture their vision. Explore our curated collection and elevate your photography experience with us.`
+  );
+
+  customAppendChild(leftSide, title, subtitle);
+  customAppendChild(rightSide, paragraph);
+  customAppendChild(container, leftSide, rightSide);
+  section.appendChild(container);
+
+  const main = document.querySelector("main");
+  customAppendChild(main, section);
+};
