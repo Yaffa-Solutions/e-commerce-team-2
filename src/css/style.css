@@ -5,54 +5,99 @@ body {
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 20px 20px;
   position: relative;
+  z-index: 0;
 }
 
 .font0 {
-  font: normal normal normal 80px/1em;
+  font-size: 80px;
+  line-height: 1em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font1 {
-  font: normal normal normal 16px/1.4em;
+  font-size: 16px;
+  line-height: 1.4em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font2 {
-  font: normal normal normal 68px/1.1em;
+  font-size: 68px;
+  line-height: 1.1em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font3 {
-  font: normal normal normal 40px/1.2em;
+  font-size: 40px;
+  line-height: 1.2em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font4 {
-  font: normal normal bold 40px/1.3em;
+  font-size: 40px;
+  line-height: 1.3em;
+  font-weight: bold;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font5 {
-  font: normal normal normal 24px/1.3em;
+  font-size: 24px;
+  line-height: 1.3em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font6 {
-  font: normal normal normal 20px/1.5em;
+  font-size: 20px;
+  line-height: 1.5em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font7 {
-  font: normal normal normal 20px/1.3em;
+  font-size: 20px;
+  line-height: 1.3em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font8 {
-  font: normal normal normal 16px/1.5em;
+  font-size: 16px;
+  line-height: 1.5em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font9 {
-  font: normal normal normal 14px/1.3em;
+  font-size: 14px;
+  line-height: 1.3em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .font10 {
-  font: normal normal 12px/1.4em;
+  font-size: 12px;
+  line-height: 1.4em;
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 form {

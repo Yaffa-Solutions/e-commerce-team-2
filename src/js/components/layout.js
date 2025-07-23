@@ -5,7 +5,7 @@ export const createNavbar = (links = []) => {
 
   const container = createHtmlElement(
     "div",
-    "max-w-7xl relative mx-auto px-4 py-3 flex justify-between items-center"
+    "max-w-[1500px] relative mx-auto px-4 py-3 flex justify-between items-center"
   );
 
   const title = createHtmlElement("img", "w-[220px]", "", {
@@ -61,7 +61,7 @@ export const createNavbar = (links = []) => {
 export const createFooter = () => {
   const footer = createHtmlElement(
     "footer",
-    "text-black shadow-md text-gray-700 border-t mt-[100px]"
+    "text-black bg-white  fixed bottom-0 left-0 right-0 z-[1000] shadow-2xl text-gray-700 border-t mt-[100px]"
   );
 
   const wrapper = createHtmlElement(
@@ -96,17 +96,7 @@ export const createFooter = () => {
 
   customAppendChild(topSection, logo, linksContainer);
 
-  const bottomSection = createHtmlElement("div", "text-center");
-
-  const copyright = createHtmlElement(
-    "p",
-    "text-sm",
-    "CameraScope. All rights reserved."
-  );
-
-  customAppendChild(bottomSection, copyright);
-
-  customAppendChild(wrapper, topSection, bottomSection);
+  customAppendChild(wrapper, topSection);
   footer.appendChild(wrapper);
   return footer;
 };

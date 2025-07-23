@@ -8,6 +8,7 @@ import { getProductsFromStorage } from "./components/showproducts.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
 import { createNavbar, createFooter } from "./components/layout.js";
+import { createHomeSection } from "./components/home.js";
 
 const links = ["Home", "Products", "About", "Contact"];
 
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.prepend(createNavbar(links));
   document.body.appendChild(createFooter());
 
-  renderProductList();
+  renderHomePage(); 
 });
 
 const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
@@ -121,4 +122,8 @@ export const openProductModal = (product = null) => {
   customAppendChild(modalContent, closeBtn, formTitle, form);
   customAppendChild(overlay, modalContent);
   customAppendChild(document.body, overlay);
+};
+
+const renderHomePage = () => {
+  createHomeSection();
 };
