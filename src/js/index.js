@@ -2,12 +2,12 @@ import {
   buildProductForm,
   saveProduct,
   updateProduct,
-} from "./components/addproduct.js";
+} from "./components/add-product.js";
 
 import {
   getProductsFromStorage,
   renderProducts,
-} from "./components/showproducts.js";
+} from "./components/show-products.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
 import { createNavbar, createFooter } from "./components/layout.js";
@@ -69,19 +69,7 @@ export const renderProductList = (seller) => {
   customAppendChild(wrapper, productList);
 
   const btnContainer = createHtmlElement("div", "w-full flex justify-end mb-4");
-  // const priceRange = createHtmlElement("input", "w-1/3 mr-4", "", {
-  //   type: "range",
-  //   min: 0,
-  //   max: 1000,
-  //   value: 1000,
-  // });
-
-  // priceRange.addEventListener("input", (e) => {
-  //   renderProducts({ maxPrice: Number(e.target.value) });
-  // });
-  // customAppendChild(btnContainer, priceRange);
-
-  const searcinput = createHtmlElement(
+  const searchInput = createHtmlElement(
     "input",
     "px-3 py-2 border border-gray-300 round-md w-1/3 mr-4",
     "",
@@ -90,11 +78,11 @@ export const renderProductList = (seller) => {
       type: "text",
     }
   );
-  searcinput.addEventListener("input", (e) => {
+  searchInput.addEventListener("input", (e) => {
     const keyword = e.target.value.toLowerCase();
     renderProducts({ name: keyword });
   });
-  customAppendChild(btnContainer, searcinput);
+  customAppendChild(btnContainer, searchInput);
 
   const addBtn = createHtmlElement(
     "button",
@@ -293,5 +281,3 @@ const renderRoute = () => {
       renderHomePage();
   }
 };
-
-const renderBuyerPage = () => {};

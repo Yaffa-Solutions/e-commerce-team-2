@@ -1,6 +1,6 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
 import { openProductModal } from "../index.js";
-import { deleteProduct } from "./addproduct.js";
+import { deleteProduct } from "./add-product.js";
 
 export const createCard = (product, seller) => {
   const card = createHtmlElement(
@@ -127,16 +127,6 @@ export const renderProducts = (filters = {}) => {
   container.innerHTML = "";
 
   let products = getProductsFromStorage();
-
-  // if (filters.name) {
-  //   products = products.filter((p) =>
-  //     p.name.toLowerCase().includes(filters.name.toLowerCase())
-  //   );
-  // }
-
-  // if (filters.maxPrice !== undefined) {
-  //   products = products.filter((p) => Number(p.price) <= filters.maxPrice);
-  // }
 
   products.forEach((product) => {
     const displayProduct = {
