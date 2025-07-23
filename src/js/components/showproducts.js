@@ -2,7 +2,7 @@ import { createHtmlElement, customAppendChild } from "../dom.js";
 import { openProductModal } from "../index.js";
 import { deleteProduct } from "./addproduct.js";
 
-export const createCard = (product) => {
+export const createCard = (product, seller) => {
   const card = createHtmlElement(
     "div",
     "relative p-[50px] bg-white rounded-lg shadow-md "
@@ -44,16 +44,6 @@ export const createCard = (product) => {
     `Category: ${product.category}`
   );
 
-  const addToCartBtn = createHtmlElement(
-    "button",
-    "mt-2 text-sm text-blue-600 hover:underline",
-    "Add to Cart",
-    {},
-    {
-      click: () => addToCart(product),
-    }
-  );
-
   const editBtn = createHtmlElement(
     "button",
     "absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
@@ -76,22 +66,90 @@ export const createCard = (product) => {
       },
     }
   );
-
-  customAppendChild(
-    card,
-    image,
-    name,
-    price,
-    priceAfterDiscount,
-    category,
-    addToCartBtn,
-    editBtn,
-    deleteBtn
+  const addToCartBtn = createHtmlElement(
+    "button",
+    "mt-2 text-sm text-blue-600 hover:underline",
+    "Add to Cart",
+    {},
+    {
+      click: () => addToCart(product),
+    }
   );
+
+  if (seller) {
+    customAppendChild(
+      card,
+      image,
+      name,
+      price,
+      priceAfterDiscount,
+      category,
+      editBtn,
+      deleteBtn
+    );
+  } else {
+    customAppendChild(
+      card,
+      image,
+      name,
+      price,
+      priceAfterDiscount,
+      category,
+      addToCartBtn
+    );
+  }
 
   return card;
 };
 
+export const getProductsFromStorage = (seller) => {
+  const products = localStorage.getItem("products") || "[]";
+  const container = setProductsToCards(JSON.parse(products), seller);
+  return container;
+};
+
+export const setProductsToCards = (products = [], seller) => {
+  const container = createHtmlElement(
+    "div",
+    "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8",
+    "",
+    { id: "product-list" }
+  );
+  products.forEach((product) => {
+    const card = createCard(product, seller);
+    customAppendChild(container, card);
+  });
+  return container;
+};
+
+export const renderProducts = (filters = {}) => {
+  const container = document.getElementById("product-list");
+  container.innerHTML = "";
+
+  let products = getProductsFromStorage();
+
+  // if (filters.name) {
+  //   products = products.filter((p) =>
+  //     p.name.toLowerCase().includes(filters.name.toLowerCase())
+  //   );
+  // }
+
+  // if (filters.maxPrice !== undefined) {
+  //   products = products.filter((p) => Number(p.price) <= filters.maxPrice);
+  // }
+
+  products.forEach((product) => {
+    const displayProduct = {
+      ...product,
+      price: product.discount
+        ? (product.price * (100 - product.discount)) / 100
+        : product.price,
+      oldPrice: product.discount ? product.price : null,
+    };
+
+    container.appendChild(createCard(displayProduct));
+  });
+};
 
 export const addToCart = (product) => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -108,56 +166,4 @@ export const addToCart = (product) => {
   cart.push(product);
   localStorage.setItem("cart", JSON.stringify(cart));
   alert(" Product added to cart!");
-};
-
-
-export const getProductsFromStorage = () => {
-  const products = localStorage.getItem("products") || "[]";
-  const container = setProductsToCards(JSON.parse(products));
-  return container;
-};
-
-export const setProductsToCards = (products = []) => {
-  const container = createHtmlElement(
-    "div",
-    "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8",
-    "",
-    { id: "product-list" }
-  );
-  products.forEach((product) => {
-    const card = createCard(product);
-    customAppendChild(container, card);
-  });
-  return container;
-};
-
-
-
-export const renderProducts = (filters = {}) => {
-  const container = document.getElementById("product-list");
-  container.innerHTML = "";
-
-  let products = getProductsFromStorage();
-
-  if (filters.name) {
-    products = products.filter((p) =>
-      p.name.toLowerCase().includes(filters.name.toLowerCase())
-    );
-  }
-
-  if (filters.maxPrice !== undefined) {
-    products = products.filter((p) => Number(p.price) <= filters.maxPrice);
-  }
-
-  products.forEach((product) => {
-    const displayProduct = {
-      ...product,
-      price: product.discount
-        ? (product.price * (100 - product.discount)) / 100
-        : product.price,
-      oldPrice: product.discount ? product.price : null,
-    };
-
-    container.appendChild(createCard(displayProduct));
-  });
 };

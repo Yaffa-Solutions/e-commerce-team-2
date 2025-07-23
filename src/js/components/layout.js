@@ -32,7 +32,7 @@ export const createNavbar = (links = []) => {
   links.forEach((text) => {
     const li = createHtmlElement("li");
     const a = createHtmlElement("a", "hover:underline", text, {
-      href: "#",
+      href: `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);
