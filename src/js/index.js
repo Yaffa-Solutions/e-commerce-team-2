@@ -169,7 +169,7 @@ export const openProductModal = (product = null) => {
   customAppendChild(document.body, overlay);
 };
 
-const openCartModal = () => {
+export const openCartModal = () => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
   const overlay = createHtmlElement(

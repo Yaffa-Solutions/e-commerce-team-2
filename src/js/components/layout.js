@@ -1,5 +1,5 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
-
+import { openCartModal } from "../index.js";
 export const createNavbar = (links = []) => {
   const nav = createHtmlElement("nav", " text-black shadow-md");
 
@@ -49,7 +49,15 @@ export const createNavbar = (links = []) => {
     "Login"
   );
 
-  const cartIcon = createHtmlElement("span", "text-xl", "🛒");
+  const cartIcon = createHtmlElement(
+    "span",
+    "text-xl",
+    "🛒",
+    {},
+    {
+      click: () => openCartModal(),
+    }
+  );
 
   customAppendChild(ul2, loginBtn, cartIcon);
 
