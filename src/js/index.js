@@ -7,8 +7,14 @@ import {
 import { getProductsFromStorage } from "./components/showproducts.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
+import { createNavbar, createFooter } from "./components/layout.js";
+
+const links = ["Home", "Products", "About", "Contact"];
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.body.prepend(createNavbar(links));
+  document.body.appendChild(createFooter());
+
   renderProductList();
 });
 
@@ -46,7 +52,7 @@ export const renderProductList = () => {
 
   const wrapper = createHtmlElement(
     "div",
-    "max-w-7xl mx-auto p-4 flex flex-col items-center justify-center",
+    " mx-auto p-4 mb-[100px] flex flex-col items-center justify-center",
     "",
     { id: "product-list" }
   );
@@ -71,7 +77,8 @@ export const renderProductList = () => {
 
   customAppendChild(wrapper, btnContainer, cardsContainer);
 
-  customAppendChild(document.body, wrapper);
+  const main = document.querySelector("main");
+  customAppendChild(main, wrapper);
 };
 
 export const openProductModal = (product = null) => {
