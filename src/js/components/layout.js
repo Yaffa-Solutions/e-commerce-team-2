@@ -1,5 +1,5 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
-import { openCartModal } from "../index.js";
+// import { openCartModal } from "../index.js";
 
 export const createNavbar = (links = []) => {
   const nav = createHtmlElement("nav", " text-black shadow-md");
