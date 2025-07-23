@@ -2,20 +2,29 @@ import {
   buildProductForm,
   saveProduct,
   updateProduct,
-} from "./components/addproduct.js";
+} from "./components/add-product.js";
 
-import { getProductsFromStorage,renderProducts } from "./components/showproducts.js";
+import {
+  getProductsFromStorage,
+  renderProducts,
+} from "./components/show-products.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
 import { createNavbar, createFooter } from "./components/layout.js";
+import {
+  createHomeSection,
+  CreateAboutUsSection,
+  createGallerySection,
+} from "./components/home.js";
 
-const links = ["Home", "Products", "About", "Contact"];
+const links = ["Home", "Dashboard", "AllProducts"];
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.prepend(createNavbar(links));
   document.body.appendChild(createFooter());
 
-  renderProductList();
+  window.addEventListener("hashchange", () => renderRoute());
+  renderRoute();
 });
 
 const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
@@ -46,49 +55,53 @@ const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   renderProductList();
 };
 
-export const renderProductList = () => {
+export const renderProductList = (seller = false) => {
+  const existingWrapper = document.getElementById("product-list");
+  if (existingWrapper) existingWrapper.remove();
+
   const wrapper = createHtmlElement(
     "div",
-    " mx-auto p-4 mb-[100px] flex flex-col items-center justify-center",
+    "mx-auto p-4 mb-[100px] flex flex-col items-center justify-center",
     "",
     { id: "product-list" }
   );
 
-
   const btnContainer = createHtmlElement("div", "w-full flex justify-end mb-4");
-const priceRange = createHtmlElement(
-  "input",
-  "w-1/3 mr-4",
-  "",
-  {
-    type: "range",
-    min: 0,
-    max: 1000,
-    value: 1000
-  }
-);
 
-priceRange.addEventListener("input", (e) => {
-  renderProducts({ maxPrice: Number(e.target.value) });
-});
+  const priceRange = createHtmlElement(
+    "input",
+    "w-1/3 mr-4",
+    "",
+    {
+      type: "range",
+      min: 0,
+      max: 1000,
+      value: 1000,
+    }
+  );
+  priceRange.addEventListener("input", (e) => {
+    renderProducts({ maxPrice: Number(e.target.value) });
+  });
 
-const searcinput=createHtmlElement("input","px-3 py-2 border border-gray-300 round-md w-1/3 mr-4",
-  "",
-{
-  placeholder: "Search by name...",
-    type: "text"
-}
-)
-searcinput.addEventListener("input", (e) => {
-  const keyword = e.target.value.toLowerCase();
-  renderProducts({ name: keyword });
-});
-customAppendChild(btnContainer,priceRange, searcinput);
+  const searchInput = createHtmlElement(
+    "input",
+    "px-3 py-2 border border-gray-300 round-md w-1/3 mr-4",
+    "",
+    {
+      placeholder: "Search by name...",
+      type: "text",
+    }
+  );
+  searchInput.addEventListener("input", (e) => {
+    const keyword = e.target.value.toLowerCase();
+    renderProducts({ name: keyword });
+  });
 
+  customAppendChild(btnContainer, priceRange, searchInput);
 
   const addBtn = createHtmlElement(
     "button",
-    " py-2 px-3 mb-[10px] bg-blue-600 text-white rounded hover:bg-blue-700 transition",
+    "py-2 px-3 mb-[10px] bg-blue-600 text-white rounded hover:bg-blue-700 transition",
     "➕ Add Product",
     {},
     {
@@ -98,22 +111,32 @@ customAppendChild(btnContainer,priceRange, searcinput);
     }
   );
 
+  if (seller) {
+    customAppendChild(btnContainer, addBtn);
+  } else {
+    const cartBtn = createHtmlElement(
+      "button",
+      "py-2 px-3 mb-[10px] mx-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition",
+      "Cart"
+    );
+    cartBtn.addEventListener("click", openCartModal);
+    btnContainer.appendChild(cartBtn);
+  }
 
-
-  customAppendChild(btnContainer, addBtn);
-const filterContainer = createHtmlElement(
+  const filterContainer = createHtmlElement(
     "div",
     "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8",
     "",
     { id: "FilterContainer" }
   );
 
-  const cardsContainer = getProductsFromStorage();
-  cardsContainer.id="CardsContainer"
-  customAppendChild(wrapper, btnContainer,filterContainer, cardsContainer);
+  const cardsContainer = getProductsFromStorage(seller);
+  cardsContainer.id = "CardsContainer";
+
+  customAppendChild(wrapper, btnContainer, filterContainer, cardsContainer);
 
   const main = document.querySelector("main");
-  main.innerHTML = ""; 
+  main.innerHTML = "";
   customAppendChild(main, wrapper);
 };
 
@@ -159,8 +182,120 @@ export const openProductModal = (product = null) => {
   customAppendChild(document.body, overlay);
 };
 
+export const openCartModal = () => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
+  const overlay = createHtmlElement(
+    "div",
+    "fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+  );
 
+  const modal = createHtmlElement(
+    "div",
+    "bg-white w-full max-w-2xl p-6 rounded shadow-lg relative"
+  );
 
+  const closeBtn = createHtmlElement(
+    "button",
+    "absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold",
+    "×",
+    {},
+    {
+      click: () => overlay.remove(),
+    }
+  );
 
+  const title = createHtmlElement(
+    "h2",
+    "text-2xl font-bold mb-4 text-center text-gray-800",
+    "🛒 Your Cart"
+  );
 
+  const list = createHtmlElement("div", "grid grid-cols-1 gap-4");
+
+  let total = 0;
+
+  cart.forEach((product) => {
+    const discountedPrice = product.discount
+      ? (product.price * (100 - product.discount)) / 100
+      : product.price;
+
+    total += discountedPrice;
+
+    const card = createHtmlElement(
+      "div",
+      "border p-4 rounded shadow-sm flex justify-between items-center"
+    );
+
+    const left = createHtmlElement("div");
+    const name = createHtmlElement("h3", "font-bold", product.name);
+    const price = createHtmlElement(
+      "p",
+      "text-green-600",
+      `$${discountedPrice.toFixed(2)}`
+    );
+    customAppendChild(left, name, price);
+
+    const removeBtn = createHtmlElement(
+      "button",
+      "text-red-500 hover:underline text-sm",
+      "Remove",
+      {},
+      {
+        click: () => {
+          removeFromCart(product);
+          overlay.remove();
+          openCartModal();
+        },
+      }
+    );
+
+    customAppendChild(card, left, removeBtn);
+    customAppendChild(list, card);
+  });
+
+  const totalView = createHtmlElement(
+    "p",
+    "text-right font-bold text-lg mt-4",
+    `Total: $${total.toFixed(2)}`
+  );
+
+  customAppendChild(modal, closeBtn, title, list, totalView);
+  customAppendChild(overlay, modal);
+  customAppendChild(document.body, overlay);
+};
+
+const removeFromCart = (productToRemove) => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const updatedCart = cart.filter(
+    (item) =>
+      !(item.name === productToRemove.name && item.price === productToRemove.price)
+  );
+
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
+};
+
+const renderHomePage = () => {
+  createHomeSection();
+  CreateAboutUsSection();
+  createGallerySection();
+};
+
+const renderRoute = () => {
+  const main = document.querySelector("main");
+  const hash = window.location.hash || "#home";
+  main.innerHTML = "";
+
+  switch (hash) {
+    case "#Dashboard":
+      renderProductList(true);
+      break;
+    case "#AllProducts":
+      renderProductList(false);
+      break;
+    default:
+      renderHomePage();
+      break;
+  }
+};

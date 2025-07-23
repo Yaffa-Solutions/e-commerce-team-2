@@ -71,10 +71,12 @@ export const createSubmitBtn = (text) => {
 };
 
 export const fetchFromLocalStorage = (key) => {
-  let data= JSON.parse(localStorage.getItem(key)) || [];
+  let data = JSON.parse(localStorage.getItem(key)) || [];
   return data;
 };
 
 export const setToLocalStorage = (key, data) => {
-    localStorage.setItem(key, JSON.stringify(data));
+  localStorage.setItem(key, JSON.stringify(data));
 };
+
+

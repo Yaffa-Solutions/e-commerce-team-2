@@ -1,11 +1,12 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
+import { openCartModal } from "../index.js";
 
 export const createNavbar = (links = []) => {
   const nav = createHtmlElement("nav", " text-black shadow-md");
 
   const container = createHtmlElement(
     "div",
-    "max-w-7xl relative mx-auto px-4 py-3 flex justify-between items-center"
+    "max-w-[1500px] relative mx-auto px-4 py-3 flex justify-between items-center"
   );
 
   const title = createHtmlElement("img", "w-[220px]", "", {
@@ -32,7 +33,7 @@ export const createNavbar = (links = []) => {
   links.forEach((text) => {
     const li = createHtmlElement("li");
     const a = createHtmlElement("a", "hover:underline", text, {
-      href: "#",
+      href: `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);
@@ -49,8 +50,16 @@ export const createNavbar = (links = []) => {
     "Login"
   );
 
-  const cartIcon = createHtmlElement("span", "text-xl", "🛒");
-cartIcon.addEventListener("click", openCartModal); 
+  const cartIcon = createHtmlElement(
+    "span",
+    "text-xl",
+    "🛒",
+    {},
+    {
+      click: () => openCartModal(),
+    }
+  );
+
   customAppendChild(ul2, loginBtn, cartIcon);
 
   customAppendChild(container, title, ul, ul2, menu);
@@ -61,7 +70,7 @@ cartIcon.addEventListener("click", openCartModal);
 export const createFooter = () => {
   const footer = createHtmlElement(
     "footer",
-    "text-black shadow-md text-gray-700 border-t mt-[100px]"
+    "text-black bg-white  z-[1000] shadow-2xl text-gray-700 border-t mt-[100px]"
   );
 
   const wrapper = createHtmlElement(
@@ -95,18 +104,7 @@ export const createFooter = () => {
   });
 
   customAppendChild(topSection, logo, linksContainer);
-
-  const bottomSection = createHtmlElement("div", "text-center");
-
-  const copyright = createHtmlElement(
-    "p",
-    "text-sm",
-    "CameraScope. All rights reserved."
-  );
-
-  customAppendChild(bottomSection, copyright);
-
-  customAppendChild(wrapper, topSection, bottomSection);
+  customAppendChild(wrapper, topSection);
   footer.appendChild(wrapper);
   return footer;
 };
@@ -141,7 +139,15 @@ const showMenuModal = (links) => {
     }
   );
 
-  const cartIcon = createHtmlElement("span", "text-2xl", "🛒");
+  const cartIcon = createHtmlElement(
+    "span",
+    "text-2xl",
+    "🛒",
+    {},
+    {
+      click: () => openCartModal(),
+    }
+  );
 
   customAppendChild(topBar, cartIcon, closeBtn);
 
@@ -150,7 +156,7 @@ const showMenuModal = (links) => {
   links.forEach((text) => {
     const li = createHtmlElement("li");
     const a = createHtmlElement("a", "text-lg hover:underline", text, {
-      href: "#",
+      href: `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);
@@ -166,8 +172,6 @@ const showMenuModal = (links) => {
   customAppendChild(overlay, menu);
   document.body.appendChild(overlay);
 };
-
-
 
 const openCartModal = () => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -232,7 +236,7 @@ const openCartModal = () => {
         click: () => {
           removeFromCart(product);
           overlay.remove();
-          openCartModal(); 
+          openCartModal();
         },
       }
     );
@@ -252,7 +256,6 @@ const openCartModal = () => {
   customAppendChild(document.body, overlay);
 };
 
-
 const removeFromCart = (productToRemove) => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -263,5 +266,3 @@ const removeFromCart = (productToRemove) => {
 
   localStorage.setItem("cart", JSON.stringify(updatedCart));
 };
-
-

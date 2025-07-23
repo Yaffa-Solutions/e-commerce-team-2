@@ -1,8 +1,9 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
 import { openProductModal } from "../index.js";
-import { deleteProduct } from "./addproduct.js";
+import { deleteProduct } from "./add-product.js";
 
-export const createCard = (product) => {
+// إنشاء كرت منتج
+export const createCard = (product, seller = false) => {
   const card = createHtmlElement(
     "div",
     "relative p-[50px] bg-white rounded-lg shadow-md "
@@ -44,16 +45,6 @@ export const createCard = (product) => {
     `Category: ${product.category}`
   );
 
-  const addToCartBtn = createHtmlElement(
-    "button",
-    "mt-2 text-sm text-blue-600 hover:underline",
-    "Add to Cart",
-    {},
-    {
-      click: () => addToCart(product),
-    }
-  );
-
   const editBtn = createHtmlElement(
     "button",
     "absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
@@ -77,47 +68,50 @@ export const createCard = (product) => {
     }
   );
 
-  customAppendChild(
-    card,
-    image,
-    name,
-    price,
-    priceAfterDiscount,
-    category,
-    addToCartBtn,
-    editBtn,
-    deleteBtn
+  const addToCartBtn = createHtmlElement(
+    "button",
+    "mt-2 text-sm text-blue-600 hover:underline",
+    "Add to Cart",
+    {},
+    {
+      click: () => addToCart(product),
+    }
   );
+
+  if (seller) {
+    customAppendChild(
+      card,
+      image,
+      name,
+      price,
+      priceAfterDiscount,
+      category,
+      editBtn,
+      deleteBtn
+    );
+  } else {
+    customAppendChild(
+      card,
+      image,
+      name,
+      price,
+      priceAfterDiscount,
+      category,
+      addToCartBtn
+    );
+  }
 
   return card;
 };
 
-
-export const addToCart = (product) => {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-  const isAlreadyInCart = cart.some(
-    (item) => item.name === product.name && item.price === product.price
-  );
-
-  if (isAlreadyInCart) {
-    alert("This product is already in your cart.");
-    return;
-  }
-
-  cart.push(product);
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert(" Product added to cart!");
-};
-
-
-export const getProductsFromStorage = () => {
+// استرجاع المنتجات وعرضها داخل container
+export const getProductsFromStorage = (seller = false) => {
   const products = localStorage.getItem("products") || "[]";
-  const container = setProductsToCards(JSON.parse(products));
+  const container = setProductsToCards(JSON.parse(products), seller);
   return container;
 };
 
-export const setProductsToCards = (products = []) => {
+export const setProductsToCards = (products = [], seller = false) => {
   const container = createHtmlElement(
     "div",
     "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8",
@@ -125,23 +119,23 @@ export const setProductsToCards = (products = []) => {
     { id: "product-list" }
   );
   products.forEach((product) => {
-    const card = createCard(product);
+    const card = createCard(product, seller);
     customAppendChild(container, card);
   });
   return container;
 };
 
-
-
+// استرجاع المنتجات كـ Array فقط (بدون DOM)
 export const getProductsFromStoragearray = () => {
   return JSON.parse(localStorage.getItem("products") || "[]");
 };
 
+// عرض المنتجات المفلترة
 export const renderProducts = (filters = {}) => {
   const filterContainer = document.getElementById("FilterContainer");
   const allProductsContainer = document.getElementById("CardsContainer");
 
-  filterContainer.innerHTML = ""; 
+  filterContainer.innerHTML = "";
   let products = getProductsFromStoragearray();
 
   if (filters.name) {
@@ -173,4 +167,22 @@ export const renderProducts = (filters = {}) => {
     allProductsContainer.style.display = "grid";
     filterContainer.style.display = "none";
   }
+};
+
+// إضافة منتج إلى السلة
+export const addToCart = (product) => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const isAlreadyInCart = cart.some(
+    (item) => item.name === product.name && item.price === product.price
+  );
+
+  if (isAlreadyInCart) {
+    alert("This product is already in your cart.");
+    return;
+  }
+
+  cart.push(product);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert("Product added to cart!");
 };
