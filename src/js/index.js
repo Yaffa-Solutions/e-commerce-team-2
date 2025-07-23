@@ -6,7 +6,7 @@ import {
 
 import {
   getProductsFromStorage,
-  renderProducts,
+  setProductsToCards,
 } from "./components/show-products.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
@@ -17,7 +17,7 @@ import {
   createGallerySection,
 } from "./components/home.js";
 
-const links = ["Home", "Dashboard", "AllProducts"];
+const links = ["Home", "Dashboard", "Items"];
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.prepend(createNavbar(links));
@@ -65,23 +65,44 @@ export const renderProductList = (seller) => {
     "",
     { id: "product-list" }
   );
-  const productList = createHtmlElement("div", "", "", { id: "product-list" });
-  customAppendChild(wrapper, productList);
 
-  const btnContainer = createHtmlElement("div", "w-full flex justify-end mb-4");
+  const btnContainer = createHtmlElement(
+    "div",
+    "w-full flex justify-between mb-4"
+  );
   const searchInput = createHtmlElement(
     "input",
     "px-3 py-2 border border-gray-300 round-md w-1/3 mr-4",
     "",
     {
-      placeholder: "Search by name...",
+      placeholder: "Search by name or category...",
       type: "text",
+      id: "search-input",
+    },
+    {
+      input: (e) => {
+        const keyword = e.target.value.toLowerCase();
+
+        const allProducts = JSON.parse(
+          localStorage.getItem("products") || "[]"
+        );
+
+        const filteredProducts = allProducts.filter((product) => {
+          return (
+            product.name.toLowerCase().includes(keyword) ||
+            product.category.toLowerCase().includes(keyword)
+          );
+        });
+
+        const productListContainer = wrapper.querySelector("#product-list");
+        productListContainer.innerHTML = "";
+
+        const newCards = setProductsToCards(filteredProducts, seller);
+        productListContainer.replaceWith(newCards);
+      },
     }
   );
-  searchInput.addEventListener("input", (e) => {
-    const keyword = e.target.value.toLowerCase();
-    renderProducts({ name: keyword });
-  });
+
   customAppendChild(btnContainer, searchInput);
 
   const addBtn = createHtmlElement(
@@ -273,7 +294,7 @@ const renderRoute = () => {
     case "#Dashboard":
       renderProductList(true);
       break;
-    case "#AllProducts":
+    case "#Items":
       renderProductList(false);
       break;
     default:
