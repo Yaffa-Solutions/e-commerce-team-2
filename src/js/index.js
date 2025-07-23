@@ -11,7 +11,11 @@ import {
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
 import { createNavbar, createFooter } from "./components/layout.js";
-import { createHomeSection, CreateAboutUsSection } from "./components/home.js";
+import {
+  createHomeSection,
+  CreateAboutUsSection,
+  createGallerySection,
+} from "./components/home.js";
 
 const links = ["Home", "Dashboard", "AllProducts"];
 
@@ -269,6 +273,7 @@ const removeFromCart = (productToRemove) => {
 const renderHomePage = () => {
   createHomeSection();
   CreateAboutUsSection();
+  createGallerySection();
 };
 
 const renderRoute = () => {
