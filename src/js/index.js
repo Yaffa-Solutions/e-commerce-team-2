@@ -276,10 +276,6 @@ const renderRoute = () => {
     case "#AllProducts":
       renderProductList(false);
       break;
-    case "#Home":
-      renderHomePage();
-      break;
-
     default:
       renderHomePage();
       break;
