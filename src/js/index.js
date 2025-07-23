@@ -6,7 +6,7 @@ import {
 
 import {
   getProductsFromStorage,
-  renderProducts,
+  setProductsToCards,
 } from "./components/show-products.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
@@ -17,7 +17,7 @@ import {
   createGallerySection,
 } from "./components/home.js";
 
-const links = ["Home", "Dashboard", "AllProducts"];
+const links = ["Home", "Dashboard", "Items"];
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.prepend(createNavbar(links));
@@ -66,55 +66,85 @@ export const renderProductList = (seller = false) => {
     { id: "product-list" }
   );
 
-  const btnContainer = createHtmlElement("div", "w-full flex justify-end mb-4");
+  const btnContainer = createHtmlElement("div", "w-full flex justify-between items-center mb-4");
+
+  const searchInput = createHtmlElement(
+    "input",
+    "px-3 py-2 border border-gray-300 rounded-md w-1/3 mr-4",
+    "",
+    {
+      placeholder: "Search by name or category...",
+      type: "text",
+      id: "search-input",
+    },
+    {
+      input: (e) => {
+        const keyword = e.target.value.toLowerCase();
+        const allProducts = JSON.parse(localStorage.getItem("products") || "[]");
+
+        const filteredProducts = allProducts.filter((product) =>
+          product.name.toLowerCase().includes(keyword) ||
+          product.category.toLowerCase().includes(keyword)
+        );
+
+        const cards = setProductsToCards(filteredProducts, seller);
+        const container = document.getElementById("CardsContainer");
+        container.replaceWith(cards);
+        cards.id = "CardsContainer";
+      },
+    }
+  );
+
+  const priceRangeContainer = createHtmlElement("div", "flex items-center gap-2 w-1/3");
+  const priceValueLabel = createHtmlElement("span", "text-gray-600 text-sm", "$1000");
 
   const priceRange = createHtmlElement(
     "input",
-    "w-1/3 mr-4",
+    "w-full",
     "",
     {
       type: "range",
       min: 0,
       max: 1000,
       value: 1000,
-    }
-  );
-  priceRange.addEventListener("input", (e) => {
-    renderProducts({ maxPrice: Number(e.target.value) });
-  });
-
-  const searchInput = createHtmlElement(
-    "input",
-    "px-3 py-2 border border-gray-300 round-md w-1/3 mr-4",
-    "",
+    },
     {
-      placeholder: "Search by name...",
-      type: "text",
-    }
-  );
-  searchInput.addEventListener("input", (e) => {
-    const keyword = e.target.value.toLowerCase();
-    renderProducts({ name: keyword });
-  });
+      input: (e) => {
+        const maxPrice = Number(e.target.value);
+        priceValueLabel.textContent = `$${maxPrice}`;
 
-  customAppendChild(btnContainer, priceRange, searchInput);
+        const allProducts = JSON.parse(localStorage.getItem("products") || "[]");
+        const filtered = allProducts.filter(p => p.price <= maxPrice);
 
-  const addBtn = createHtmlElement(
-    "button",
-    "py-2 px-3 mb-[10px] bg-blue-600 text-white rounded hover:bg-blue-700 transition",
-    "➕ Add Product",
-    {},
-    {
-      click: () => {
-        openProductModal();
+        const cards = setProductsToCards(filtered, seller);
+        const container = document.getElementById("CardsContainer");
+        container.replaceWith(cards);
+        cards.id = "CardsContainer";
       },
     }
   );
 
+  customAppendChild(priceRangeContainer, priceRange, priceValueLabel);
+
+  const addBtn = createHtmlElement(
+    "button",
+    "py-2 px-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition",
+    "➕ Add Product",
+    {},
+    {
+      click: () => openProductModal(),
+    }
+  );
+
+  const controlsWrapper = createHtmlElement("div", "flex gap-4 w-full justify-between");
+  customAppendChild(controlsWrapper, searchInput, priceRangeContainer);
+
   if (seller) {
-    customAppendChild(btnContainer, addBtn);
-  } 
-    
+    customAppendChild(btnContainer, controlsWrapper, addBtn);
+  } else {
+    customAppendChild(btnContainer, controlsWrapper);
+  }
+
   const filterContainer = createHtmlElement(
     "div",
     "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8",
@@ -185,7 +215,7 @@ const renderRoute = () => {
     case "#Dashboard":
       renderProductList(true);
       break;
-    case "#AllProducts":
+    case "#Items":
       renderProductList(false);
       break;
     default:
