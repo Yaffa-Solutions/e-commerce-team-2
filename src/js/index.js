@@ -104,7 +104,9 @@ export const renderProductList = (seller) => {
     }
   );
 
-  customAppendChild(btnContainer, addBtn);
+  if (seller) {
+    customAppendChild(btnContainer, addBtn);
+  }
 
   if (!seller) {
     const Cartbtn = createHtmlElement(
