@@ -13,13 +13,14 @@ import { createHtmlElement, customAppendChild } from "./dom.js";
 import { createNavbar, createFooter } from "./components/layout.js";
 import { createHomeSection, CreateAboutUsSection } from "./components/home.js";
 
-const links = ["Home", "Products", "About", "Contact"];
+const links = ["Home", "Dashboard", "AllProducts"];
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.prepend(createNavbar(links));
   document.body.appendChild(createFooter());
 
-  renderHomePage();
+  window.addEventListener("hashchange", () => renderRoute());
+  renderRoute();
 });
 
 const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
@@ -50,7 +51,7 @@ const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   renderProductList();
 };
 
-export const renderProductList = () => {
+export const renderProductList = (seller) => {
   const existingWrapper = document.getElementById("product-list");
   if (existingWrapper) existingWrapper.remove();
 
@@ -64,17 +65,17 @@ export const renderProductList = () => {
   customAppendChild(wrapper, productList);
 
   const btnContainer = createHtmlElement("div", "w-full flex justify-end mb-4");
-  const priceRange = createHtmlElement("input", "w-1/3 mr-4", "", {
-    type: "range",
-    min: 0,
-    max: 1000,
-    value: 1000,
-  });
+  // const priceRange = createHtmlElement("input", "w-1/3 mr-4", "", {
+  //   type: "range",
+  //   min: 0,
+  //   max: 1000,
+  //   value: 1000,
+  // });
 
-  priceRange.addEventListener("input", (e) => {
-    renderProducts({ maxPrice: Number(e.target.value) });
-  });
-  customAppendChild(btnContainer, priceRange);
+  // priceRange.addEventListener("input", (e) => {
+  //   renderProducts({ maxPrice: Number(e.target.value) });
+  // });
+  // customAppendChild(btnContainer, priceRange);
 
   const searcinput = createHtmlElement(
     "input",
@@ -103,18 +104,22 @@ export const renderProductList = () => {
     }
   );
 
-  customAppendChild(btnContainer, addBtn);
-  //////////////////////
-  const Cartbtn = createHtmlElement(
-    "button",
-    " py-2 px-3 mb-[10px] mx-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition",
-    "Cart"
-  );
-  Cartbtn.addEventListener("click", openCartModal);
+  if (seller) {
+    customAppendChild(btnContainer, addBtn);
+  }
 
-  customAppendChild(btnContainer, Cartbtn);
-  ////////////////////////////////
-  const cardsContainer = getProductsFromStorage();
+  if (!seller) {
+    const Cartbtn = createHtmlElement(
+      "button",
+      " py-2 px-3 mb-[10px] mx-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition",
+      "Cart"
+    );
+    Cartbtn.addEventListener("click", openCartModal);
+
+    customAppendChild(btnContainer, Cartbtn);
+  }
+
+  const cardsContainer = getProductsFromStorage(seller);
 
   customAppendChild(wrapper, btnContainer, cardsContainer);
 
@@ -164,7 +169,7 @@ export const openProductModal = (product = null) => {
   customAppendChild(document.body, overlay);
 };
 
-const openCartModal = () => {
+export const openCartModal = () => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
   const overlay = createHtmlElement(
@@ -261,9 +266,27 @@ const removeFromCart = (productToRemove) => {
   localStorage.setItem("cart", JSON.stringify(updatedCart));
 };
 
-
-const renderHomePage=()=>
-{
+const renderHomePage = () => {
   createHomeSection();
-  CreateAboutUsSection()
-}
+  CreateAboutUsSection();
+};
+
+const renderRoute = () => {
+  const main = document.querySelector("main");
+  const hash = window.location.hash || "#home";
+  main.innerHTML = "";
+
+  switch (hash) {
+    case "#Dashboard":
+      renderProductList(true);
+      break;
+    case "#AllProducts":
+      renderProductList(false);
+      break;
+    case "#Home":
+    default:
+      renderHomePage();
+  }
+};
+
+const renderBuyerPage = () => {};
