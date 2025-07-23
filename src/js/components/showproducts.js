@@ -1,7 +1,12 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
+import { openProductModal } from "../index.js";
+import { deleteProduct } from "./addproduct.js";
 
 export const createCard = (product) => {
-  const card = createHtmlElement("div", "bg-white rounded-lg shadow-md p-4");
+  const card = createHtmlElement(
+    "div",
+    "relative p-[50px] bg-white rounded-lg shadow-md "
+  );
 
   const image = createHtmlElement(
     "img",
@@ -12,6 +17,7 @@ export const createCard = (product) => {
       alt: product.name,
     }
   );
+
   const discountedPrice = (product.price * (100 - product.discount)) / 100;
 
   const name = createHtmlElement(
@@ -19,35 +25,73 @@ export const createCard = (product) => {
     "text-lg font-semibold mb-1",
     product.name
   );
+
   const price = createHtmlElement(
     "p",
     "text-gray-600 line-through mb-1",
     `Price: $${product.price}`
   );
+
   const priceAfterDiscount = createHtmlElement(
     "p",
     "text-green-600 font-semibold mb-1",
     `Discounted Price: $${discountedPrice.toFixed(2)}`
   );
+
   const category = createHtmlElement(
     "p",
     "text-gray-600",
     `Category: ${product.category}`
   );
-const addToCartBtn = createHtmlElement(
-  "button",
-  "mt-2 text-sm text-blue-600 hover:underline",
-  "Add to Cart",
-  {},
-  {
-    click: () => addToCart(product),
-  }
-);
 
-  customAppendChild(card, image, name, price, priceAfterDiscount, category,addToCartBtn);
+  const addToCartBtn = createHtmlElement(
+    "button",
+    "mt-2 text-sm text-blue-600 hover:underline",
+    "Add to Cart",
+    {},
+    {
+      click: () => addToCart(product),
+    }
+  );
+
+  const editBtn = createHtmlElement(
+    "button",
+    "absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
+    "Edit",
+    {},
+    {
+      click: () => openProductModal(product),
+    }
+  );
+
+  const deleteBtn = createHtmlElement(
+    "button",
+    "absolute top-2 right-2 text-white px-3 py-1 rounded transition",
+    "❌",
+    {},
+    {
+      click: () => {
+        if (confirm("Are you sure you want to delete this product?"))
+          deleteProduct(product);
+      },
+    }
+  );
+
+  customAppendChild(
+    card,
+    image,
+    name,
+    price,
+    priceAfterDiscount,
+    category,
+    addToCartBtn,
+    editBtn,
+    deleteBtn
+  );
 
   return card;
 };
+
 
 export const addToCart = (product) => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");

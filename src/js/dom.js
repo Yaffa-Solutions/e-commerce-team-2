@@ -59,12 +59,22 @@ export const createInput = (
   return div;
 };
 
-export const createSubmitBtn = () => {
+export const createSubmitBtn = (text) => {
   let btn = createHtmlElement(
     "button",
     "w-full bg-blue-600 text-white font-bold py-2 rounded-md hover:bg-blue-700 transition-colors",
     "Submit"
   );
   btn.type = "submit";
+  btn.textContent = text;
   return btn;
+};
+
+export const fetchFromLocalStorage = (key) => {
+  let data= JSON.parse(localStorage.getItem(key)) || [];
+  return data;
+};
+
+export const setToLocalStorage = (key, data) => {
+    localStorage.setItem(key, JSON.stringify(data));
 };

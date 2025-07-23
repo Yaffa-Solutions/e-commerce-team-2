@@ -1,64 +1,59 @@
- 
- body 
- {
-      font-family: 'Space Grotesk', sans-serif;
-     font-weight:normal ;
-     background-color: rgb(255, 255, 255);
+body {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: normal;
+  background-color: rgb(255, 255, 255);
+}
 
-   }
-
-
-.container
-{
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px 20px;
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 20px;
+  position: relative;
 }
 
 .font0 {
-  font: normal normal normal 80px/1em ;
+  font: normal normal normal 80px/1em;
 }
 
 .font1 {
-  font: normal normal normal 16px/1.4em ;
+  font: normal normal normal 16px/1.4em;
 }
 
 .font2 {
-  font: normal normal normal 68px/1.1em ;
+  font: normal normal normal 68px/1.1em;
 }
 
 .font3 {
-  font: normal normal normal 40px/1.2em ;
+  font: normal normal normal 40px/1.2em;
 }
 
 .font4 {
-  font: normal normal bold 40px/1.3em ;
+  font: normal normal bold 40px/1.3em;
 }
 
 .font5 {
-  font: normal normal normal 24px/1.3em ;
+  font: normal normal normal 24px/1.3em;
 }
 
 .font6 {
-  font: normal normal normal 20px/1.5em ;
+  font: normal normal normal 20px/1.5em;
 }
 
 .font7 {
-  font: normal normal normal 20px/1.3em ;
+  font: normal normal normal 20px/1.3em;
 }
 
 .font8 {
-  font: normal normal normal 16px/1.5em ;
+  font: normal normal normal 16px/1.5em;
 }
 
 .font9 {
-  font: normal normal normal 14px/1.3em ;
+  font: normal normal normal 14px/1.3em;
 }
 
 .font10 {
-  font:  normal normal 12px/1.4em ;
+  font: normal normal 12px/1.4em;
 }
-
 
 form {
   max-width: 400px;
@@ -67,7 +62,7 @@ form {
   border: 1px solid #ccc;
   border-radius: 8px;
   background: #fafafa;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 form div {
@@ -91,7 +86,7 @@ form input {
 }
 
 form input:focus {
-  border-color: #3182ce; 
+  border-color: #3182ce;
   outline: none;
 }
 
