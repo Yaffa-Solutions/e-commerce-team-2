@@ -1,7 +1,7 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
 import { openProductModal } from "../index.js";
 import { deleteProduct } from "./add-product.js";
-
+import { updateCartCount } from "./layout.js";
 export const createCard = (product, seller) => {
   const card = createHtmlElement(
     "div",
@@ -155,5 +155,6 @@ export const addToCart = (product) => {
 
   cart.push(product);
   localStorage.setItem("cart", JSON.stringify(cart));
+  updateCartCount();
   alert(" Product added to cart!");
 };

@@ -10,7 +10,11 @@ import {
 } from "./components/show-products.js";
 
 import { createHtmlElement, customAppendChild } from "./dom.js";
-import { createNavbar, createFooter } from "./components/layout.js";
+import {
+  createNavbar,
+  createFooter,
+  updateCartCount,
+} from "./components/layout.js";
 import {
   createHomeSection,
   CreateAboutUsSection,
@@ -98,17 +102,6 @@ export const renderProductList = (seller) => {
 
   if (seller) {
     customAppendChild(btnContainer, addBtn);
-  }
-
-  if (!seller) {
-    const Cartbtn = createHtmlElement(
-      "button",
-      " py-2 px-3 mb-[10px] mx-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition",
-      "Cart"
-    );
-    Cartbtn.addEventListener("click", openCartModal);
-
-    customAppendChild(btnContainer, Cartbtn);
   }
 
   const cardsContainer = getProductsFromStorage(seller);
@@ -256,6 +249,7 @@ const removeFromCart = (productToRemove) => {
   );
 
   localStorage.setItem("cart", JSON.stringify(updatedCart));
+  updateCartCount();
 };
 
 const renderHomePage = () => {
