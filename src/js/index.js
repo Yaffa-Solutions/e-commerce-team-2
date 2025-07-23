@@ -277,7 +277,11 @@ const renderRoute = () => {
       renderProductList(false);
       break;
     case "#Home":
+      renderHomePage();
+      break;
+
     default:
       renderHomePage();
+      break;
   }
 };
