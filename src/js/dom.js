@@ -111,7 +111,7 @@ export const showMessageDialog = (
 
   const textEl = createHtmlElement("p", "text-sm font-medium", message);
 
-  if (type === "confirm" && typeof onConfirm === "function") {
+  if (type === "confirm") {
     const btnContainer = createHtmlElement("div", "self-end flex gap-3");
 
     const yesBtn = createHtmlElement(
