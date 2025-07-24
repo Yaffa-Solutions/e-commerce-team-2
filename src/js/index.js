@@ -9,7 +9,11 @@ import {
   setProductsToCards,
 } from "./components/show-products.js";
 
-import { createHtmlElement, customAppendChild } from "./dom.js";
+import {
+  createHtmlElement,
+  customAppendChild,
+  showMessageDialog,
+} from "./dom.js";
 import {
   createNavbar,
   createFooter,
@@ -39,20 +43,26 @@ const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   const discount = parseFloat(product.discount);
 
   if (isNaN(price) || price <= 0) {
-    alert("Price must be a positive number.");
+    showMessageDialog("Price must be a positive number.", "warning");
     return;
   }
 
   if (isNaN(discount) || discount < 0) {
-    alert("Discount must be a non-negative number.");
+    showMessageDialog("Discount must be a non-negative number.", "warning");
+    return;
+  }
+
+  if (discount >= 100) {
+    showMessageDialog("Discount must be a less than 100", "warning");
     return;
   }
 
   saveProduct(product);
 
   const isUpdate = !!form.dataset.id;
-  alert(
-    isUpdate ? "Product updated successfully!" : "Product added successfully!"
+  showMessageDialog(
+    isUpdate ? "Product updated successfully!" : "Product added successfully!",
+    "success"
   );
 
   form.reset();
@@ -279,7 +289,7 @@ const renderHomePage = () => {
   createGallerySection();
 };
 
-const renderRoute = () => {
+export const renderRoute = () => {
   const main = document.querySelector("main");
   const hash = window.location.hash || "#home";
   main.innerHTML = "";
