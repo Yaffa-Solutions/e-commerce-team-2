@@ -8,7 +8,7 @@ import {
   setToLocalStorage,
 } from "../dom.js";
 
-import { renderProductList } from "../index.js";
+import { renderRoute } from "../index.js";
 
 const inputFelid = [
   {
@@ -172,5 +172,5 @@ export const deleteProduct = (product) => {
   let products = fetchFromLocalStorage("products");
   products = products.filter((p) => p.id !== product.id);
   setToLocalStorage("products", products);
-  renderProductList();
+  renderRoute();
 };

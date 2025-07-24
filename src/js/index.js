@@ -9,7 +9,11 @@ import {
   setProductsToCards,
 } from "./components/show-products.js";
 
-import { createHtmlElement, customAppendChild } from "./dom.js";
+import {
+  createHtmlElement,
+  customAppendChild,
+  showMessageDialog,
+} from "./dom.js";
 import {
   createNavbar,
   createFooter,
@@ -19,6 +23,7 @@ import {
   createHomeSection,
   CreateAboutUsSection,
   createGallerySection,
+  createFAQSection,
 } from "./components/home.js";
 
 const links = ["Home", "Dashboard", "Items"];
@@ -39,24 +44,30 @@ const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   const discount = parseFloat(product.discount);
 
   if (isNaN(price) || price <= 0) {
-    alert("Price must be a positive number.");
+    showMessageDialog("Price must be a positive number.", "warning");
     return;
   }
 
   if (isNaN(discount) || discount < 0) {
-    alert("Discount must be a non-negative number.");
+    showMessageDialog("Discount must be a non-negative number.", "warning");
+    return;
+  }
+
+  if (discount >= 100) {
+    showMessageDialog("Discount must be a less than 100", "warning");
     return;
   }
 
   saveProduct(product);
 
   const isUpdate = !!form.dataset.id;
-  alert(
-    isUpdate ? "Product updated successfully!" : "Product added successfully!"
+  showMessageDialog(
+    isUpdate ? "Product updated successfully!" : "Product added successfully!",
+    "success"
   );
 
   form.reset();
-  renderProductList();
+  renderRoute();
 };
 
 export const renderProductList = (seller = false) => {
@@ -132,7 +143,7 @@ export const renderProductList = (seller = false) => {
 
   const addBtn = createHtmlElement(
     "button",
-    "py-2 px-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition",
+    "py-2 px-3 mb-[10px] bg-black text-white rounded border border-transparent hover:bg-white hover:text-black hover:border-black transition",
     "➕ Add Product",
     {},
     {
@@ -212,9 +223,10 @@ const renderHomePage = () => {
   createHomeSection();
   CreateAboutUsSection();
   createGallerySection();
+  createFAQSection();
 };
 
-const renderRoute = () => {
+export const renderRoute = () => {
   const main = document.querySelector("main");
   const hash = window.location.hash || "#home";
   main.innerHTML = "";
