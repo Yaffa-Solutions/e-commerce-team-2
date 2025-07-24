@@ -33,7 +33,6 @@ export const createNavbar = (links = []) => {
     const li = createHtmlElement("li");
     const a = createHtmlElement("a", "hover:underline nav-link", text, {
       href: `#${text}`,
-      "data-link": `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);
@@ -178,7 +177,6 @@ const showMenuModal = (links) => {
     const li = createHtmlElement("li");
     const a = createHtmlElement("a", "text-lg hover:underline nav-link", text, {
       href: `#${text}`,
-      "data-link": `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);
@@ -212,7 +210,7 @@ export const setActiveLink = () => {
 
   const links = document.querySelectorAll(".nav-link");
   links.forEach((link) => {
-    if (link.getAttribute("data-link") === window.location.hash) {
+    if (link.getAttribute("href") === window.location.hash) {
       link.classList.add("text-blue-600", "font-semibold", "underline");
     } else {
       link.classList.remove("text-blue-600", "font-semibold", "underline");
