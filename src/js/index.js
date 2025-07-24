@@ -18,6 +18,7 @@ import {
   createNavbar,
   createFooter,
   updateCartCount,
+  setActiveLink,
 } from "./components/layout.js";
 import {
   createHomeSection,
@@ -32,8 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.prepend(createNavbar(links));
   document.body.appendChild(createFooter());
 
-  window.addEventListener("hashchange", () => renderRoute());
+  window.addEventListener("hashchange", () => {
+    renderRoute();
+    setActiveLink();
+  });
   renderRoute();
+  setActiveLink();
 });
 
 const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
