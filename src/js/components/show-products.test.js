@@ -1,7 +1,7 @@
 import { test, beforeEach } from "node:test";
 import assert from "node:assert";
 import { saveProduct } from "./add-product.js";
-import { fetchFromLocalStorage, setToLocalStorage } from "../dom.js";
+import { fetchFromLocalStorage } from "../dom.js";
 
 global.localStorage = {
   store: {},
