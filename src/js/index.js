@@ -24,13 +24,13 @@ import {
 
 const links = ["Home", "Dashboard", "Items"];
 
-document.addEventListener("DOMContentLoaded", () => {
+export const initApp = () => {
   document.body.prepend(createNavbar(links));
   document.body.appendChild(createFooter());
 
   window.addEventListener("hashchange", () => renderRoute());
   renderRoute();
-});
+};
 
 const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   e.preventDefault();
