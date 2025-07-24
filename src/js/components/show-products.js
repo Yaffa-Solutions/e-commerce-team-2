@@ -46,7 +46,7 @@ export const createCard = (product, seller) => {
 
   const editBtn = createHtmlElement(
     "button",
-    "absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
+    "absolute top-2 left-2 bg-black text-white px-3 py-1 rounded hover:bg-white hover:text-black hover:border-black  rounded border border-transparent transition",
     "Edit",
     {},
     {

@@ -104,8 +104,6 @@ export const createGallerySection = () => {
     "Our Gallery Showcase"
   );
 
-  
-
   const row1 = createRow(
     "../../public/images/gallary1.jpg",
     "Photography",
@@ -136,42 +134,104 @@ export const createGallerySection = () => {
 };
 
 const createRow = (
-    imgSrc,
-    titleText,
-    subtitleText,
-    paraText,
-    reverse = false
-  ) => {
-    const row = createHtmlElement(
-      "div",
-      `flex flex-col md:flex-row ${
-        reverse ? "md:flex-row-reverse" : ""
-      } items-center gap-8`
-    );
+  imgSrc,
+  titleText,
+  subtitleText,
+  paraText,
+  reverse = false
+) => {
+  const row = createHtmlElement(
+    "div",
+    `flex flex-col md:flex-row ${
+      reverse ? "md:flex-row-reverse" : ""
+    } items-center gap-8`
+  );
 
-    const image = createHtmlElement(
-      "img",
-      "w-full md:w-1/2 rounded-lg shadow-md",
-      "",
-      {
-        src: imgSrc,
-        alt: titleText,
-      }
-    );
+  const image = createHtmlElement(
+    "img",
+    "w-full md:w-1/2 rounded-lg shadow-md",
+    "",
+    {
+      src: imgSrc,
+      alt: titleText,
+    }
+  );
 
-    const textContainer = createHtmlElement("div", "w-full md:w-1/2");
+  const textContainer = createHtmlElement("div", "w-full md:w-1/2");
 
-    const title = createHtmlElement("h3", " font-bold mb-2 font4", titleText);
+  const title = createHtmlElement("h3", " font-bold mb-2 font4", titleText);
 
-    const subtitle = createHtmlElement(
-      "h4",
-      " text-gray-700 font-medium mb-2 font7",
-      subtitleText
-    );
+  const subtitle = createHtmlElement(
+    "h4",
+    " text-gray-700 font-medium mb-2 font7",
+    subtitleText
+  );
 
-    const paragraph = createHtmlElement("p", "leading-relaxed font8", paraText);
+  const paragraph = createHtmlElement("p", "leading-relaxed font8", paraText);
 
-    customAppendChild(textContainer, title, subtitle, paragraph);
-    customAppendChild(row, image, textContainer);
-    return row;
-  };
+  customAppendChild(textContainer, title, subtitle, paragraph);
+  customAppendChild(row, image, textContainer);
+  return row;
+};
+
+export const createFAQSection = () => {
+  const section = createHtmlElement(
+    "section",
+    "w-full  border-solid border-x py-16 px-6 mb-[100px] bg-gray-50"
+  );
+
+  const container = createHtmlElement(
+    "div",
+    "max-w-7xl mx-auto flex flex-col gap-8"
+  );
+
+  const title = createHtmlElement("h2", " font-bold text-start font2", "FAQ");
+
+  const subtitle = createHtmlElement(
+    "p",
+    "text-gray-700 text-start font5 mt-[-10px]",
+    "Common Questions"
+  );
+
+  const faqRow = createHtmlElement(
+    "div",
+    "flex flex-col md:flex-row gap-6 mt-10"
+  );
+
+  const faq1 = createFAQItem(
+    "Product Availability",
+    "Our store offers a wide range of cameras, lenses, and accessories. Check our product availability to find the latest models and gear that suit your photography needs."
+  );
+
+  const faq2 = createFAQItem(
+    "Shipping Information",
+    "Curious about our shipping process? Learn more about our shipping policies, delivery times, and international shipping options to get your photography gear delivered to your doorstep hassle-free."
+  );
+
+  const faq3 = createFAQItem(
+    "Return Policy",
+    "We want you to be satisfied with your purchase. Understand our return policy guidelines, including how to return products, exchange options, and our commitment to ensuring your shopping experience is seamless."
+  );
+
+  customAppendChild(faqRow, faq1, faq2, faq3);
+  customAppendChild(container, title, subtitle, faqRow);
+  section.appendChild(container);
+
+  const main = document.querySelector("main");
+  customAppendChild(main, section);
+};
+
+const createFAQItem = (question, answer) => {
+  const wrapper = createHtmlElement("div", "flex-1  p-6 ");
+
+  const qTitle = createHtmlElement(
+    "h3",
+    "text-xl font-semibold mb-2 font7",
+    question
+  );
+
+  const qText = createHtmlElement("p", "text-gray-700 text-base font8", answer);
+
+  customAppendChild(wrapper, qTitle, qText);
+  return wrapper;
+};
