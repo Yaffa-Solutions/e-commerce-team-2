@@ -1,5 +1,5 @@
 import { createHtmlElement, customAppendChild } from "../dom.js";
-import { openCartModal } from "../index.js";
+
 export const createNavbar = (links = []) => {
   const nav = createHtmlElement("nav", " text-black shadow-md");
 
@@ -113,7 +113,6 @@ export const createFooter = () => {
   });
 
   customAppendChild(topSection, logo, linksContainer);
-
   customAppendChild(wrapper, topSection);
   footer.appendChild(wrapper);
   return footer;
@@ -149,7 +148,15 @@ const showMenuModal = (links) => {
     }
   );
 
-  const cartIcon = createHtmlElement("span", "text-2xl", "🛒");
+  const cartIcon = createHtmlElement(
+    "span",
+    "text-2xl",
+    "🛒",
+    {},
+    {
+      click: () => openCartModal(),
+    }
+  );
 
   customAppendChild(topBar, cartIcon, closeBtn);
 
@@ -173,6 +180,101 @@ const showMenuModal = (links) => {
   customAppendChild(menu, topBar, ul, loginBtn);
   customAppendChild(overlay, menu);
   document.body.appendChild(overlay);
+};
+
+const openCartModal = () => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const overlay = createHtmlElement(
+    "div",
+    "fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+  );
+
+  const modal = createHtmlElement(
+    "div",
+    "bg-white w-full max-w-2xl p-6 rounded shadow-lg relative"
+  );
+
+  const closeBtn = createHtmlElement(
+    "button",
+    "absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold",
+    "×",
+    {},
+    {
+      click: () => overlay.remove(),
+    }
+  );
+
+  const title = createHtmlElement(
+    "h2",
+    "text-2xl font-bold mb-4 text-center text-gray-800",
+    "🛒 Your Cart"
+  );
+
+  const list = createHtmlElement("div", "grid grid-cols-1 gap-4");
+
+  let total = 0;
+
+  cart.forEach((product) => {
+    const discountedPrice = product.discount
+      ? (product.price * (100 - product.discount)) / 100
+      : product.price;
+
+    total += discountedPrice;
+
+    const card = createHtmlElement(
+      "div",
+      "border p-4 rounded shadow-sm flex justify-between items-center"
+    );
+
+    const left = createHtmlElement("div");
+    const name = createHtmlElement("h3", "font-bold", product.name);
+    const price = createHtmlElement(
+      "p",
+      "text-green-600",
+      `$${discountedPrice.toFixed(2)}`
+    );
+    customAppendChild(left, name, price);
+
+    const removeBtn = createHtmlElement(
+      "button",
+      "text-red-500 hover:underline text-sm",
+      "Remove",
+      {},
+      {
+        click: () => {
+          removeFromCart(product);
+          overlay.remove();
+          openCartModal();
+        },
+      }
+    );
+
+    customAppendChild(card, left, removeBtn);
+    customAppendChild(list, card);
+  });
+
+  const totalView = createHtmlElement(
+    "p",
+    "text-right font-bold text-lg mt-4",
+    `Total: $${total.toFixed(2)}`
+  );
+
+  customAppendChild(modal, closeBtn, title, list, totalView);
+  customAppendChild(overlay, modal);
+  customAppendChild(document.body, overlay);
+};
+
+const removeFromCart = (productToRemove) => {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const updatedCart = cart.filter(
+    (item) =>
+      !(item.name === productToRemove.name && item.price === productToRemove.price)
+  );
+
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
+  updateCartCount();
 };
 
 const getCartCount = () => {

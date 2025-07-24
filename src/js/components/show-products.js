@@ -6,7 +6,8 @@ import {
 import { openProductModal } from "../index.js";
 import { deleteProduct } from "./add-product.js";
 import { updateCartCount } from "./layout.js";
-export const createCard = (product, seller) => {
+
+export const createCard = (product, seller = false) => {
   const card = createHtmlElement(
     "div",
     "relative p-[50px] bg-white rounded-lg shadow-md "
@@ -80,6 +81,7 @@ export const createCard = (product, seller) => {
       },
     }
   );
+
   const addToCartBtn = createHtmlElement(
     "button",
     "mt-2 text-sm text-blue-600 hover:underline",
@@ -116,13 +118,13 @@ export const createCard = (product, seller) => {
   return card;
 };
 
-export const getProductsFromStorage = (seller) => {
+export const getProductsFromStorage = (seller = false) => {
   const products = localStorage.getItem("products") || "[]";
   const container = setProductsToCards(JSON.parse(products), seller);
   return container;
 };
 
-export const setProductsToCards = (products = [], seller) => {
+export const setProductsToCards = (products = [], seller = false) => {
   const container = createHtmlElement(
     "div",
     "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8",
@@ -136,25 +138,49 @@ export const setProductsToCards = (products = [], seller) => {
   return container;
 };
 
-export const renderProducts = (filters = {}) => {
-  const container = document.getElementById("product-list");
-  container.innerHTML = "";
-
-  let products = getProductsFromStorage();
-
-  products.forEach((product) => {
-    const displayProduct = {
-      ...product,
-      price: product.discount
-        ? (product.price * (100 - product.discount)) / 100
-        : product.price,
-      oldPrice: product.discount ? product.price : null,
-    };
-
-    container.appendChild(createCard(displayProduct));
-  });
+export const getProductsFromStoragearray = () => {
+  return JSON.parse(localStorage.getItem("products") || "[]");
 };
 
+export const renderProducts = (filters = {}) => {
+  const filterContainer = document.getElementById("FilterContainer");
+  const allProductsContainer = document.getElementById("CardsContainer");
+
+  filterContainer.innerHTML = "";
+  let products = getProductsFromStoragearray();
+
+  if (filters.name) {
+    products = products.filter((p) =>
+      p.name.toLowerCase().includes(filters.name.toLowerCase())
+    );
+  }
+
+  if (filters.maxPrice !== undefined) {
+    products = products.filter((p) => Number(p.price) <= filters.maxPrice);
+  }
+
+  if (products.length > 0) {
+    allProductsContainer.style.display = "none";
+    filterContainer.style.display = "grid";
+
+    products.forEach((product) => {
+      const displayProduct = {
+        ...product,
+        price: product.discount
+          ? (product.price * (100 - product.discount)) / 100
+          : product.price,
+        oldPrice: product.discount ? product.price : null,
+      };
+
+      filterContainer.appendChild(createCard(displayProduct));
+    });
+  } else {
+    allProductsContainer.style.display = "grid";
+    filterContainer.style.display = "none";
+  }
+};
+
+// إضافة منتج إلى السلة
 export const addToCart = (product) => {
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -170,5 +196,5 @@ export const addToCart = (product) => {
   cart.push(product);
   localStorage.setItem("cart", JSON.stringify(cart));
   updateCartCount();
-  alert(" Product added to cart!");
+  alert("Product added to cart!");
 };
