@@ -19,6 +19,7 @@ import {
   createHomeSection,
   CreateAboutUsSection,
   createGallerySection,
+  createFAQSection,
 } from "./components/home.js";
 
 const links = ["Home", "Dashboard", "Items"];
@@ -56,7 +57,7 @@ const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   );
 
   form.reset();
-  renderProductList();
+  renderRoute();
 };
 
 export const renderProductList = (seller) => {
@@ -111,7 +112,7 @@ export const renderProductList = (seller) => {
 
   const addBtn = createHtmlElement(
     "button",
-    " py-2 px-3 mb-[10px] bg-blue-600 text-white rounded hover:bg-blue-700 transition",
+    "py-2 px-3 mb-[10px] bg-black text-white rounded border border-transparent hover:bg-white hover:text-black hover:border-black transition",
     "➕ Add Product",
     {},
     {
@@ -277,9 +278,10 @@ const renderHomePage = () => {
   createHomeSection();
   CreateAboutUsSection();
   createGallerySection();
+  createFAQSection();
 };
 
-const renderRoute = () => {
+export const renderRoute = () => {
   const main = document.querySelector("main");
   const hash = window.location.hash || "#home";
   main.innerHTML = "";
