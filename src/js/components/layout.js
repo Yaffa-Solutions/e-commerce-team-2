@@ -31,8 +31,9 @@ export const createNavbar = (links = []) => {
 
   links.forEach((text) => {
     const li = createHtmlElement("li");
-    const a = createHtmlElement("a", "hover:underline", text, {
+    const a = createHtmlElement("a", "hover:underline nav-link", text, {
       href: `#${text}`,
+      "data-link": `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);
@@ -149,16 +150,35 @@ const showMenuModal = (links) => {
     }
   );
 
-  const cartIcon = createHtmlElement("span", "text-2xl", "🛒");
+  const cartWrapper = createHtmlElement(
+    "div",
+    "relative  cursor-pointer",
+    "",
+    {},
+    {
+      click: () => openCartModal(),
+    }
+  );
 
-  customAppendChild(topBar, cartIcon, closeBtn);
+  const cartCount = createHtmlElement(
+    "span",
+    "absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full",
+    getCartCount().toString(),
+    { id: "cart-count" }
+  );
+
+  const cartIcon = createHtmlElement("span", "text-xl", "🛒");
+
+  customAppendChild(cartWrapper, cartIcon, cartCount);
+  customAppendChild(topBar, cartWrapper, closeBtn);
 
   const ul = createHtmlElement("ul", "flex flex-col gap-4");
 
   links.forEach((text) => {
     const li = createHtmlElement("li");
-    const a = createHtmlElement("a", "text-lg hover:underline", text, {
+    const a = createHtmlElement("a", "text-lg hover:underline nav-link", text, {
       href: `#${text}`,
+      "data-link": `#${text}`,
     });
     customAppendChild(li, a);
     customAppendChild(ul, li);
@@ -185,4 +205,17 @@ export const updateCartCount = () => {
   if (cartCountSpan) {
     cartCountSpan.textContent = getCartCount().toString();
   }
+};
+
+export const setActiveLink = () => {
+  console.log("here");
+
+  const links = document.querySelectorAll(".nav-link");
+  links.forEach((link) => {
+    if (link.getAttribute("data-link") === window.location.hash) {
+      link.classList.add("text-blue-600", "font-semibold", "underline");
+    } else {
+      link.classList.remove("text-blue-600", "font-semibold", "underline");
+    }
+  });
 };
