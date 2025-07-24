@@ -75,24 +75,22 @@ const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   renderRoute();
 };
 
-export const renderProductList = (seller) => {
+export const renderProductList = (seller = false) => {
   const existingWrapper = document.getElementById("product-list");
   if (existingWrapper) existingWrapper.remove();
 
   const wrapper = createHtmlElement(
     "div",
-    " mx-auto p-4 mb-[100px] flex flex-col items-center justify-center",
+    "mx-auto p-4 mb-[100px] flex flex-col items-center justify-center",
     "",
     { id: "product-list" }
   );
 
-  const btnContainer = createHtmlElement(
-    "div",
-    "w-full flex justify-between mb-4"
-  );
+  const btnContainer = createHtmlElement("div", "w-full flex justify-between items-center mb-4");
+
   const searchInput = createHtmlElement(
     "input",
-    "px-3 py-2 border border-gray-300 round-md w-1/3 mr-4",
+    "px-3 py-2 border border-gray-300 rounded-md w-1/3 mr-4",
     "",
     {
       placeholder: "Search by name or category...",
@@ -102,28 +100,51 @@ export const renderProductList = (seller) => {
     {
       input: (e) => {
         const keyword = e.target.value.toLowerCase();
+        const allProducts = JSON.parse(localStorage.getItem("products") || "[]");
 
-        const allProducts = JSON.parse(
-          localStorage.getItem("products") || "[]"
+        const filteredProducts = allProducts.filter((product) =>
+          product.name.toLowerCase().includes(keyword) ||
+          product.category.toLowerCase().includes(keyword)
         );
 
-        const filteredProducts = allProducts.filter((product) => {
-          return (
-            product.name.toLowerCase().includes(keyword) ||
-            product.category.toLowerCase().includes(keyword)
-          );
-        });
-
-        const productListContainer = wrapper.querySelector("#product-list");
-        productListContainer.innerHTML = "";
-
-        const newCards = setProductsToCards(filteredProducts, seller);
-        productListContainer.replaceWith(newCards);
+        const cards = setProductsToCards(filteredProducts, seller);
+        const container = document.getElementById("CardsContainer");
+        container.replaceWith(cards);
+        cards.id = "CardsContainer";
       },
     }
   );
 
-  customAppendChild(btnContainer, searchInput);
+  const priceRangeContainer = createHtmlElement("div", "flex items-center gap-2 w-1/3");
+  const priceValueLabel = createHtmlElement("span", "text-gray-600 text-sm", "$1000");
+
+  const priceRange = createHtmlElement(
+    "input",
+    "w-full",
+    "",
+    {
+      type: "range",
+      min: 0,
+      max: 1000,
+      value: 1000,
+    },
+    {
+      input: (e) => {
+        const maxPrice = Number(e.target.value);
+        priceValueLabel.textContent = `$${maxPrice}`;
+
+        const allProducts = JSON.parse(localStorage.getItem("products") || "[]");
+        const filtered = allProducts.filter(p => p.price <= maxPrice);
+
+        const cards = setProductsToCards(filtered, seller);
+        const container = document.getElementById("CardsContainer");
+        container.replaceWith(cards);
+        cards.id = "CardsContainer";
+      },
+    }
+  );
+
+  customAppendChild(priceRangeContainer, priceRange, priceValueLabel);
 
   const addBtn = createHtmlElement(
     "button",
@@ -131,21 +152,33 @@ export const renderProductList = (seller) => {
     "➕ Add Product",
     {},
     {
-      click: () => {
-        openProductModal();
-      },
+      click: () => openProductModal(),
     }
   );
 
+  const controlsWrapper = createHtmlElement("div", "flex gap-4 w-full justify-between");
+  customAppendChild(controlsWrapper, searchInput, priceRangeContainer);
+
   if (seller) {
-    customAppendChild(btnContainer, addBtn);
+    customAppendChild(btnContainer, controlsWrapper, addBtn);
+  } else {
+    customAppendChild(btnContainer, controlsWrapper);
   }
 
-  const cardsContainer = getProductsFromStorage(seller);
+  const filterContainer = createHtmlElement(
+    "div",
+    "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8",
+    "",
+    { id: "FilterContainer" }
+  );
 
-  customAppendChild(wrapper, btnContainer, cardsContainer);
+  const cardsContainer = getProductsFromStorage(seller);
+  cardsContainer.id = "CardsContainer";
+
+  customAppendChild(wrapper, btnContainer, filterContainer, cardsContainer);
 
   const main = document.querySelector("main");
+  main.innerHTML = "";
   customAppendChild(main, wrapper);
 };
 
@@ -189,104 +222,6 @@ export const openProductModal = (product = null) => {
   customAppendChild(modalContent, closeBtn, formTitle, form);
   customAppendChild(overlay, modalContent);
   customAppendChild(document.body, overlay);
-};
-
-export const openCartModal = () => {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-  const overlay = createHtmlElement(
-    "div",
-    "fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
-  );
-
-  const modal = createHtmlElement(
-    "div",
-    "bg-white w-full max-w-2xl p-6 rounded shadow-lg relative"
-  );
-
-  const closeBtn = createHtmlElement(
-    "button",
-    "absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold",
-    "×",
-    {},
-    {
-      click: () => overlay.remove(),
-    }
-  );
-
-  const title = createHtmlElement(
-    "h2",
-    "text-2xl font-bold mb-4 text-center text-gray-800",
-    "🛒 Your Cart"
-  );
-
-  const list = createHtmlElement("div", "grid grid-cols-1 gap-4");
-
-  let total = 0;
-
-  cart.forEach((product) => {
-    const discountedPrice = product.discount
-      ? (product.price * (100 - product.discount)) / 100
-      : product.price;
-
-    total += discountedPrice;
-
-    const card = createHtmlElement(
-      "div",
-      "border p-4 rounded shadow-sm flex justify-between items-center"
-    );
-
-    const left = createHtmlElement("div");
-    const name = createHtmlElement("h3", "font-bold", product.name);
-    const price = createHtmlElement(
-      "p",
-      "text-green-600",
-      `$${discountedPrice.toFixed(2)}`
-    );
-    customAppendChild(left, name, price);
-
-    const removeBtn = createHtmlElement(
-      "button",
-      "text-red-500 hover:underline text-sm",
-      "Remove",
-      {},
-      {
-        click: () => {
-          removeFromCart(product);
-          overlay.remove();
-          openCartModal();
-        },
-      }
-    );
-
-    customAppendChild(card, left, removeBtn);
-    customAppendChild(list, card);
-  });
-
-  const totalView = createHtmlElement(
-    "p",
-    "text-right font-bold text-lg mt-4",
-    `Total: $${total.toFixed(2)}`
-  );
-
-  customAppendChild(modal, closeBtn, title, list, totalView);
-  customAppendChild(overlay, modal);
-  customAppendChild(document.body, overlay);
-};
-
-const removeFromCart = (productToRemove) => {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-  const updatedCart = cart.filter(
-    (item) =>
-      !(
-        item.name === productToRemove.name &&
-        item.price === productToRemove.price
-      )
-  );
-
-  localStorage.setItem("cart", JSON.stringify(updatedCart));
-  updateCartCount();
 };
 
 const renderHomePage = () => {
