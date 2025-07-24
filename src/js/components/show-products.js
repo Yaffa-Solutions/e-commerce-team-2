@@ -1,4 +1,8 @@
-import { createHtmlElement, customAppendChild } from "../dom.js";
+import {
+  createHtmlElement,
+  customAppendChild,
+  showMessageDialog,
+} from "../dom.js";
 import { openProductModal } from "../index.js";
 import { deleteProduct } from "./add-product.js";
 import { updateCartCount } from "./layout.js";
@@ -47,7 +51,7 @@ export const createCard = (product, seller = false) => {
 
   const editBtn = createHtmlElement(
     "button",
-    "absolute top-2 left-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition",
+    "absolute top-2 left-2 bg-black text-white px-3 py-1 rounded hover:bg-white hover:text-black hover:border-black  rounded border border-transparent transition",
     "Edit",
     {},
     {
@@ -62,8 +66,18 @@ export const createCard = (product, seller = false) => {
     {},
     {
       click: () => {
-        if (confirm("Are you sure you want to delete this product?"))
-          deleteProduct(product);
+        showMessageDialog(
+          "Are you sure you want to delete this product?",
+          "confirm",
+          (confirmed) => {
+            if (confirmed) {
+              deleteProduct(product);
+              window.location.reload();
+            } else {
+              console.log("User refused");
+            }
+          }
+        );
       },
     }
   );
