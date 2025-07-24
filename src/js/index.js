@@ -29,7 +29,7 @@ import {
 
 const links = ["Home", "Dashboard", "Items"];
 
-document.addEventListener("DOMContentLoaded", () => {
+export const initApp = () => {
   document.body.prepend(createNavbar(links));
   document.body.appendChild(createFooter());
 
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   renderRoute();
   setActiveLink();
-});
+};
 
 const onSubmit = async (e, form, getProductDataFromForm, saveProduct) => {
   e.preventDefault();
